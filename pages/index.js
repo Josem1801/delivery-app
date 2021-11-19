@@ -4,8 +4,10 @@ import Photo from "../public/photo.jpg";
 import Hamburger from "../public/hamburger.svg";
 import Pizza from "../public/pizza.svg";
 import Cakes from "../public/cakes.svg";
-import SearchInput from "@components/SearchInput";
+import Input from "@components/Input";
 import PopularFood from "@components/PopularFood";
+import { AiOutlineSearch } from "react-icons/ai";
+
 export default function Home() {
   return (
     <Layout user={{ photo: Photo, name: "Jose Manuel Rosales" }}>
@@ -13,7 +15,10 @@ export default function Home() {
       <span style={{ color: "gray", fontWeight: 400, fontSize: 14 }}>
         Lets get your order
       </span>
-      <SearchInput />
+      <Input
+        icon={<AiOutlineSearch fontSize={18} />}
+        placeholder="Search our delicius brugers"
+      />
       <FoodCategory data={categoryFood} />
       <PopularFood />
     </Layout>

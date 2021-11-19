@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import styles from "@styles/FoodCategory.module.css";
+import styles from "@stylesComponents/FoodCategory.module.css";
 import { AiFillRightCircle } from "react-icons/ai";
 import Image from "next/image";
 function FoodCategory({ data }) {
@@ -8,7 +8,7 @@ function FoodCategory({ data }) {
     <div
       onTouchStart={() => setTouch(true)}
       onTouchEnd={() => setTouch(false)}
-      className={`${styles.container} ${touch && styles.down}`}
+      className={`${styles.container} ${touch ? styles.down : styles.up}`}
     >
       {data.map((category, id) => (
         <div key={id} className={styles.category}>

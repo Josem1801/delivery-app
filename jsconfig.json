@@ -5,8 +5,11 @@
       "@components/*": [
         "components/*"
       ],
-      "@styles/*": [
-        "styles/*"
+      "@stylesComponents/*": [
+        "styles/components/*"
+      ],
+      "@stylesPages/*": [
+        "styles/pages/*"
       ]
     }
   },

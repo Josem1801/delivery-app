@@ -1,8 +1,9 @@
 import React from "react";
 import Link from "next/link";
-import styles from "@styles/PopularFood.module.css";
+import styles from "@stylesComponents/PopularFood.module.css";
 import PopularFoodCard from "./PopularFoodCard";
 import Chipotle from "../public/chipotle-cheesy-chicken.svg";
+import Burger from "../public/burger.svg";
 import { AiOutlineRight } from "react-icons/ai";
 function PopularFood({ foodName, food }) {
   return (
@@ -17,7 +18,7 @@ function PopularFood({ foodName, food }) {
         </Link>
       </div>
       <PopularFoodCard image={Chipotle} />
-      <PopularFoodCard image={Chipotle} />
+      <PopularFoodCard image={Burger} />
     </div>
   );
 }

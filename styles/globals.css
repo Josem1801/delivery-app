@@ -5,6 +5,7 @@ body {
   margin: 0;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
+  background-color: #e5e5e5;
 }
 
 a {
@@ -36,7 +37,7 @@ span {
 }
 ::-webkit-scrollbar {
   width: 5px;
-  height: 5px;
+  height: 7px;
 }
 
 ::-webkit-scrollbar-track {
