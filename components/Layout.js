@@ -9,9 +9,10 @@ import { FiHeart, FiShoppingCart } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
 import PropTypes from "prop-types";
+import { AiOutlineUser } from "react-icons/ai";
 function Layout({ content, children, location, user, header, nav }) {
   const { pathname } = useRouter();
-  console.log(pathname);
+
   return (
     <div className={styles.layout}>
       <Head>
@@ -24,7 +25,11 @@ function Layout({ content, children, location, user, header, nav }) {
       ) : (
         <header className={styles.layout__header}>
           <span className={styles.layout__headerPhoto}>
-            <Image src={user.photo} layout="fill" alt={user.name} />
+            {user.photo && user.name ? (
+              <Image src={user.photo} layout="fill" alt={user.name} />
+            ) : (
+              <AiOutlineUser fontSize={25} />
+            )}
           </span>
           <span>Chicago, IL</span>
           <FiShoppingCart fontSize={20} cursor="pointer" />
@@ -37,7 +42,15 @@ function Layout({ content, children, location, user, header, nav }) {
             {navbar.map((section, id) => (
               <li key={id}>
                 <Link href={section.rute} passHref>
-                  <a className={styles.layout__navSection}>
+                  <a
+                    className={`
+                    ${styles.layout__navSection} 
+                    ${
+                      pathname === section.rute &&
+                      styles.layout__navSectionSelected
+                    }
+                    `}
+                  >
                     {section.icon}
                     <span>{section.name}</span>
                   </a>

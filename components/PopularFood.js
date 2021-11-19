@@ -10,7 +10,7 @@ function PopularFood({ foodName, food }) {
     <div className={styles.container}>
       <div className={styles.header}>
         <span>Popular</span>
-        <Link passHref href={`${foodName}-all`}>
+        <Link passHref href={`/${foodName}-all`}>
           <a className={styles.viewAll}>
             View all
             <AiOutlineRight fontSize={11} style={{ paddingBottom: 2 }} />

@@ -63,3 +63,6 @@
 .layout__navSection:hover {
   color: #c8161d;
 }
+.layout__navSectionSelected {
+  color: #c8161d;
+}

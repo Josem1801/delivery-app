@@ -1,9 +1,19 @@
 import React from "react";
 
-function Button({ children, margin, padding, background, color, borderColor }) {
+function Button({
+  children,
+  margin,
+  padding,
+  background,
+  color,
+  borderColor,
+  ...props
+}) {
   return (
     <>
-      <div className="button">{children}</div>
+      <div {...props} className="button">
+        {children}
+      </div>
       <style jsx>{`
         .button {
           display: flex;
@@ -18,6 +28,11 @@ function Button({ children, margin, padding, background, color, borderColor }) {
           ${borderColor ? `border: 1px solid ${borderColor}` : ""};
           cursor: pointer;
           font-weight: 400;
+          transition: 0.2s ease-in-out;
+        }
+        .button:hover {
+          background: black;
+          color: white;
         }
       `}</style>
     </>

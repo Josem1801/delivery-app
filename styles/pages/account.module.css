@@ -1,4 +1,27 @@
 .account {
-  height: 50%;
-  justify-self: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-evenly;
+}
+.account__profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.account__profile span {
+  font-size: 18px;
+  font-weight: bold;
+}
+.account__profile div {
+  font-size: 12px;
+  color: gray;
+  line-height: 10px;
+}
+.image {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
 }

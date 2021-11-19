@@ -11,12 +11,6 @@
 .container:hover {
   overflow-x: auto;
 }
-.up {
-  overflow-x: hidden;
-}
-.down {
-  overflow-x: auto;
-}
 
 .container.down::-webkit-scrollbar {
   height: 0;
@@ -47,4 +41,13 @@
   height: 45px;
   background: white;
   border-radius: 7px;
+}
+
+@media (max-width: 600px) {
+  .container.up {
+    overflow-x: hidden;
+  }
+  .down {
+    overflow-x: auto;
+  }
 }
