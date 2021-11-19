@@ -1,8 +1,8 @@
 import Layout from "@components/Layout";
 import React from "react";
 
-function Favorites() {
+function More() {
   return <Layout></Layout>;
 }
 
-export default Favorites;
+export default More;

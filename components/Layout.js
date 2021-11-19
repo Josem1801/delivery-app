@@ -25,7 +25,7 @@ function Layout({ content, children, location, user, header, nav }) {
       ) : (
         <header className={styles.layout__header}>
           <span className={styles.layout__headerPhoto}>
-            {user.photo && user.name ? (
+            {user?.image ? (
               <Image src={user.photo} layout="fill" alt={user.name} />
             ) : (
               <AiOutlineUser fontSize={25} />
