@@ -22,7 +22,7 @@ function Layout({
 }) {
   const { pathname } = useRouter();
   const { data: session } = useSession();
-  console.log(session);
+
   return (
     <div className={styles.layout}>
       <Head>

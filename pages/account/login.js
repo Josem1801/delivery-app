@@ -1,14 +1,28 @@
-import HeaderBack from "./HeaderBack";
-import Layout from "./Layout";
+import HeaderBack from "@components/HeaderBack";
+import Layout from "@components/Layout";
 import Input from "@components/Input";
 import { FiUser } from "react-icons/fi";
 import { RiLockPasswordLine } from "react-icons/ri";
 import Link from "next/link";
-import Button from "./Button";
+import Button from "@components/Button";
 import { FcGoogle } from "react-icons/fc";
 import styles from "@stylesComponents/Login.module.css";
-import { signIn } from "next-auth/react";
+import { signIn, useSession, getProviders } from "next-auth/react";
+import { useRouter } from "next/router";
+export async function getServerSideProps() {
+  const providers = await getProviders();
+  return {
+    props: {
+      providers,
+    },
+  };
+}
 function Login({ providers }) {
+  const { data: session } = useSession();
+  const router = useRouter();
+  if (session) {
+    router.push("/account");
+  }
   return (
     <Layout header={<HeaderBack />}>
       <section className={styles.login}>
@@ -27,7 +41,7 @@ function Login({ providers }) {
         />
         <p style={{ margin: "0 auto", width: "70%", fontSize: 12 }}>
           ¿No tienes una cuenta?{" "}
-          <Link href="/register">
+          <Link href="/account/register">
             <a style={{ color: "#C8161D" }}>Registrate</a>
           </Link>
         </p>
@@ -41,7 +55,7 @@ function Login({ providers }) {
         <Button
           background="transparent"
           color="black"
-          padding="2px 70px"
+          padding="4px 10px"
           margin="10px auto"
           borderColor="black"
           onClick={() => signIn(providers.google.id)}

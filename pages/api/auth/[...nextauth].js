@@ -12,7 +12,7 @@ export default NextAuth({
     }),
   ],
   pages: {
-    signIn: "/account",
+    signIn: "/account/login",
   },
   callbacks: {
     async session({ session, token }) {
