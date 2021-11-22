@@ -10,6 +10,7 @@ import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
 import PropTypes from "prop-types";
 import { AiOutlineUser } from "react-icons/ai";
+import { useSession } from "next-auth/react";
 function Layout({
   content,
   children,
@@ -20,7 +21,8 @@ function Layout({
   navbar = true,
 }) {
   const { pathname } = useRouter();
-
+  const { data: session } = useSession();
+  console.log(session);
   return (
     <div className={styles.layout}>
       <Head>
@@ -31,8 +33,12 @@ function Layout({
       {header ? (
         <header className={styles.layout__header}>
           <span className={styles.layout__headerPhoto}>
-            {user?.image ? (
-              <Image src={user.photo} layout="fill" alt={user.name} />
+            {session?.user.image ? (
+              <Image
+                src={session.user.image}
+                layout="fill"
+                alt={session.user.name}
+              />
             ) : (
               <AiOutlineUser fontSize={25} />
             )}

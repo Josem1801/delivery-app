@@ -33,7 +33,7 @@ export default function Home() {
       });
   }, [selectedCategory]);
   return (
-    <Layout user={{ photo: session?.user.image, name: session?.user.name }}>
+    <Layout>
       <h1>Hey!</h1>
       <span style={{ color: "gray", fontWeight: 400, fontSize: 14 }}>
         Lets get your order

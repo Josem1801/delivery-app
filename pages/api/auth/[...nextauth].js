@@ -14,4 +14,10 @@ export default NextAuth({
   pages: {
     signIn: "/account",
   },
+  callbacks: {
+    async session({ session, token }) {
+      session.user.uid = token.sub;
+      return session;
+    },
+  },
 });
