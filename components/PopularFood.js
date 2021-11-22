@@ -2,10 +2,9 @@ import React from "react";
 import Link from "next/link";
 import styles from "@stylesComponents/PopularFood.module.css";
 import PopularFoodCard from "./PopularFoodCard";
-import Chipotle from "../public/chipotle-cheesy-chicken.svg";
-import Burger from "../public/burger.svg";
 import { AiOutlineRight } from "react-icons/ai";
-function PopularFood({ foodName, food }) {
+import Spinner from "./Spinner";
+function PopularFood({ loading, foodName, foodData = [], category }) {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -17,8 +16,20 @@ function PopularFood({ foodName, food }) {
           </a>
         </Link>
       </div>
-      <PopularFoodCard image={Chipotle} />
-      <PopularFoodCard image={Burger} />
+      {loading ? (
+        <Spinner />
+      ) : (
+        foodData.map(({ image, name, type, price }, idx) => (
+          <PopularFoodCard
+            key={idx}
+            image={image}
+            name={name}
+            type={type}
+            price={price}
+            category={category}
+          />
+        ))
+      )}
     </div>
   );
 }

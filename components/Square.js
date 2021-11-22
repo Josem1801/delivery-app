@@ -1,16 +1,14 @@
 import React from "react";
 import styles from "@stylesComponents/Square.module.css";
-function Square({ children, size = 40, ...props }) {
+function Square({ children, size = 40, className, ...props }) {
   return (
-    <>
-      <div
-        {...props}
-        className={styles.square}
-        style={{ width: size, height: size }}
-      >
-        {children}
-      </div>
-    </>
+    <div
+      {...props}
+      className={`${styles.square} ${className}`}
+      style={{ width: size, height: size }}
+    >
+      {children}
+    </div>
   );
 }
 

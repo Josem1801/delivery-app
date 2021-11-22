@@ -1,5 +1,14 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import {
+  getFirestore,
+  collectionGroup,
+  getDoc,
+  getDocs,
+  collection,
+  doc,
+  where,
+  query,
+} from "firebase/firestore/lite";
 import { getStorage } from "firebase/storage";
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -12,7 +21,28 @@ const firebaseConfig = {
   appId: "1:692813078809:web:2bfc79d6791d2b56e7a588",
 };
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore();
+const db = getFirestore(app);
 const storage = getStorage();
 
-export { app, db, storage };
+async function getCategoryFood(db, category = "burgers") {
+  const foodCol = collection(db, `categorys/${category}/products`);
+  const docs = await getDocs(foodCol);
+  const foodCategory = docs.docs.map((category) => category.data());
+  return foodCategory;
+}
+
+async function getFoodByName(
+  db,
+  category = "burgers",
+  name = "Chipotle Cheesy chicken"
+) {
+  const foodCol = collection(db, "categorys", category, "products");
+  const q = query(foodCol, where("name", "==", name));
+  const foodDoc = await getDocs(q);
+  const food = foodDoc.docs.map((doc) => {
+    return doc.data();
+  });
+  return food[0];
+}
+
+export { app, db, storage, getCategoryFood, getFoodByName };

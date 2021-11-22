@@ -1,19 +1,22 @@
 import React from "react";
 import styles from "@stylesComponents/PopularFoodCard.module.css";
 import Image from "next/image";
-function PopularFoodCard({ image }) {
+import Link from "next/link";
+function PopularFoodCard({ image, name, type, price, category }) {
   return (
     <div className={styles.card}>
-      <div className={styles.card__backgroundColor}>
-        <div className={styles.card__image}>
-          <Image src={image} alt="Chipotle" />
+      <Link href={`/${category}/${name}`} passHref>
+        <div className={styles.card__backgroundColor}>
+          <div className={styles.card__image}>
+            <Image height={200} width={220} src={image} alt="Chipotle" />
+          </div>
         </div>
-      </div>
+      </Link>
       <div className={styles.card__row}>
-        <p>Chipotle Cheesy chicken</p>
-        <span>$20.95</span>
+        <p>{name}</p>
+        <span>${price}</span>
       </div>
-      <span>Chicken Burger</span>
+      <span>{type}</span>
     </div>
   );
 }

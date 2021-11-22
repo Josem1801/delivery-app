@@ -9,7 +9,6 @@ import { FcGoogle } from "react-icons/fc";
 import styles from "@stylesComponents/Login.module.css";
 import { signIn } from "next-auth/react";
 function Login({ providers }) {
-  console.log(providers);
   return (
     <Layout header={<HeaderBack />}>
       <section className={styles.login}>

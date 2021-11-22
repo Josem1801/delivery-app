@@ -10,19 +10,25 @@ import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
 import PropTypes from "prop-types";
 import { AiOutlineUser } from "react-icons/ai";
-function Layout({ content, children, location, user, header, nav }) {
+function Layout({
+  content,
+  children,
+  location,
+  className,
+  user,
+  header = true,
+  navbar = true,
+}) {
   const { pathname } = useRouter();
 
   return (
     <div className={styles.layout}>
       <Head>
-        <title>Delivery App</title>
+        <title>Food delivery</title>
         <meta name="description" content={content} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {header ? (
-        header
-      ) : (
         <header className={styles.layout__header}>
           <span className={styles.layout__headerPhoto}>
             {user?.image ? (
@@ -34,12 +40,14 @@ function Layout({ content, children, location, user, header, nav }) {
           <span>Chicago, IL</span>
           <FiShoppingCart fontSize={20} cursor="pointer" />
         </header>
+      ) : (
+        header
       )}
-      <main className={styles.layout__main}>{children}</main>
+      <main className={`${styles.layout__main} ${className}`}>{children}</main>
       {navbar && (
         <nav className={styles.layout__nav}>
           <ul>
-            {navbar.map((section, id) => (
+            {navbarData.map((section, id) => (
               <li key={id}>
                 <Link href={section.rute} passHref>
                   <a
@@ -66,7 +74,7 @@ function Layout({ content, children, location, user, header, nav }) {
 
 export default Layout;
 
-const navbar = [
+const navbarData = [
   {
     name: "Home",
     icon: <MdDashboard />,

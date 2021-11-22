@@ -12,7 +12,7 @@
   color: #667c8a;
   font-size: 14px;
   align-items: center;
-  cursor: pointer;
+
   box-shadow: 0 0 25px 2px rgba(0, 0, 0, 0.3);
 }
 .card__backgroundColor {
@@ -24,12 +24,21 @@
   height: 100%;
   border-radius: 8px;
   justify-self: center;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
 }
-
+.card:hover .card__backgroundColor {
+  background: #ffffffc4;
+}
 .card__image {
   position: absolute;
-  top: -40px;
+  top: -50px;
   width: 200px;
+  transition: 0.3s ease-in-out;
+}
+.card:hover .card__image {
+  transform: scale(1.2);
+  top: -35px;
 }
 
 .card__row {
