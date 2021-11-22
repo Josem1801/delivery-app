@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/dist/client/router";
-import { db, getFoodByName } from "../../firebase";
+import { db, getFoodByName } from "../../../firebase";
 import Layout from "@components/Layout";
 import HeaderBack from "@components/HeaderBack";
 import { BiHeart } from "react-icons/bi";

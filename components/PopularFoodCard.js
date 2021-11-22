@@ -5,7 +5,7 @@ import Link from "next/link";
 function PopularFoodCard({ image, name, type, price, category }) {
   return (
     <div className={styles.card}>
-      <Link href={`/${category}/${name}`} passHref>
+      <Link href={`/food/${category}/${name}`} passHref>
         <div className={styles.card__backgroundColor}>
           <div className={styles.card__image}>
             <Image height={200} width={220} src={image} alt="Chipotle" />
