@@ -4,11 +4,11 @@ import styles from "@stylesComponents/Layout.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
-import { BsThreeDots, BsBagDashFill } from "react-icons/bs";
+import { BsThreeDots } from "react-icons/bs";
 import { FiHeart, FiShoppingCart } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
-import PropTypes from "prop-types";
+
 import { AiOutlineUser } from "react-icons/ai";
 import { useSession } from "next-auth/react";
 function Layout({

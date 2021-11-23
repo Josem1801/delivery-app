@@ -18,6 +18,7 @@ export async function getServerSideProps() {
   };
 }
 function Login({ providers }) {
+  console.log(providers);
   const { data: session } = useSession();
   const router = useRouter();
   if (session) {
