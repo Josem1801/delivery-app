@@ -1,11 +1,8 @@
 import { initializeApp, getApp, getApps } from "firebase/app";
 import {
   getFirestore,
-  collectionGroup,
-  getDoc,
   getDocs,
   collection,
-  doc,
   where,
   query,
 } from "firebase/firestore/lite";

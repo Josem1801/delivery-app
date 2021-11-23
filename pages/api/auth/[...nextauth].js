@@ -7,17 +7,12 @@ export default NextAuth({
   // https://next-auth.js.org/configuration/providers
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
+      clientId: " process.env.GOOGLE_ID",
+      clientSecret: "process.env.GOOGLE_SECRET",
     }),
   ],
   pages: {
     signIn: "/account/login",
-  },
-  callbacks: {
-    async session({ session, token }) {
-      session.user.uid = token.sub;
-      return session;
-    },
+    signOut: "/account",
   },
 });

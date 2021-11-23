@@ -3,7 +3,7 @@
   place-items: center;
   height: 100%;
 }
-.register > div {
+.register > form {
   width: 100%;
   display: grid;
   place-items: center;

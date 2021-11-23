@@ -15,6 +15,7 @@ function SearchInput({
       <div className="searchInput">
         <span>{icon}</span>
         <input
+          autoComplete="true"
           type={inputType}
           placeholder={placeholder}
           className="searchInput__input"

@@ -17,7 +17,7 @@ function Register() {
   return (
     <Layout>
       <section className={styles.register}>
-        <div>
+        <form>
           <h1>Registrate</h1>
           <div className={styles.name}>
             <Input icon={<FiUser fontSize={18} />} placeholder="Nombre" />
@@ -52,7 +52,7 @@ function Register() {
           <Button padding="0 40px" margin="20px auto">
             Entrar
           </Button>
-        </div>
+        </form>
       </section>
     </Layout>
   );

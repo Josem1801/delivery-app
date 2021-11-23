@@ -1,6 +1,5 @@
 import FoodCategory from "@components/FoodCategory";
 import Layout from "@components/Layout";
-import Photo from "../public/photo.jpg";
 import Hamburger from "../public/hamburger.svg";
 import Pizza from "../public/pizza.svg";
 import Cakes from "../public/cakes.svg";
@@ -8,12 +7,10 @@ import Input from "@components/Input";
 import Papas from "../public/papas.svg";
 import PopularFood from "@components/PopularFood";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { db, getCategoryFood, getFoodByName } from "../firebase";
-import Spinner from "@components/Spinner";
+import { db, getCategoryFood } from "../firebase";
+
 export default function Home() {
-  const { data: session } = useSession();
   const [selectedCategory, setSelectedCategory] = useState("burgers");
   const [categoryData, setCategoryData] = useState([]);
   const [loading, setLoading] = useState(false);
