@@ -1,5 +1,10 @@
 import React from "react";
-function Spinner({ size, color, strokeWidth, margin }) {
+function Spinner({
+  size = "medium",
+  color = "black",
+  strokeWidth = 3,
+  margin,
+}) {
   return (
     <>
       <div className={`spinner spinner--${size}`}></div>
