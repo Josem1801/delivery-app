@@ -7,27 +7,36 @@ import Link from "next/link";
 import Button from "@components/Button";
 import { FcGoogle } from "react-icons/fc";
 import styles from "@stylesComponents/Login.module.css";
-import { signIn, useSession, getProviders } from "next-auth/react";
-import { useRouter } from "next/router";
-export async function getServerSideProps() {
-  const providers = await getProviders();
-  return {
-    props: {
-      providers,
-    },
+import {
+  withAuthUserTokenSSR,
+  AuthAction,
+  withAuthUser,
+} from "next-firebase-auth";
+import {
+  loginWithEmailAndPassword,
+  auth,
+  loginWithGoogle,
+} from "../../firebase";
+import Spinner from "@components/Spinner";
+export const getServerSideProps = withAuthUserTokenSSR({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+})(() => {
+  return { props: {} };
+});
+
+function Login() {
+  const handleLoginWithEmailAndPassword = () => {
+    loginWithEmailAndPassword(auth, "josem@gmail.com", "JoseRg");
   };
-}
-function Login({ providers }) {
-  console.log(providers);
-  const { data: session } = useSession();
-  const router = useRouter();
-  if (session) {
-    router.push("/account");
-  }
+  const handleLoginWithGoogle = async () => {
+    await loginWithGoogle();
+  };
+
   return (
     <Layout header={<HeaderBack />}>
       <section className={styles.login}>
         <h1 style={{ textAlign: "center" }}>Inicia Sesion</h1>
+
         <Input
           icon={<FiUser fontSize={18} />}
           placeholder="Correo electrónico"
@@ -46,7 +55,11 @@ function Login({ providers }) {
             <a style={{ color: "#C8161D" }}>Registrate</a>
           </Link>
         </p>
-        <Button padding="2px 80px" margin="10px auto">
+        <Button
+          padding="7px 80px"
+          margin="10px auto"
+          onClick={handleLoginWithEmailAndPassword}
+        >
           Entrar
         </Button>
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -56,10 +69,10 @@ function Login({ providers }) {
         <Button
           background="transparent"
           color="black"
-          padding="4px 10px"
+          padding="7px 10px"
           margin="10px auto"
           borderColor="black"
-          onClick={() => signIn(providers.google.id)}
+          onClick={handleLoginWithGoogle}
         >
           <FcGoogle /> &nbsp; Inicia sesión con Google
         </Button>
@@ -68,4 +81,6 @@ function Login({ providers }) {
   );
 }
 
-export default Login;
+export default withAuthUser({
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
+})(Login);

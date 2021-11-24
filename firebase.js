@@ -1,3 +1,11 @@
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+} from "@firebase/auth";
 import { initializeApp, getApp, getApps } from "firebase/app";
 import {
   getFirestore,
@@ -7,6 +15,7 @@ import {
   query,
 } from "firebase/firestore/lite";
 import { getStorage } from "firebase/storage";
+import { getCsrfToken } from "next-auth/react";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -21,12 +30,50 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const db = getFirestore(app);
 const storage = getStorage();
-
+const auth = getAuth();
+const googleProvider = new GoogleAuthProvider();
 async function getCategoryFood(db, category = "burgers") {
   const foodCol = collection(db, `categorys/${category}/products`);
   const docs = await getDocs(foodCol);
   const foodCategory = docs.docs.map((category) => category.data());
   return foodCategory;
+}
+
+async function loginWithEmailAndPassword(auth, email, password) {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return userCredential;
+  } catch (err) {
+    return err;
+  }
+}
+
+async function loginWithGoogle() {
+  try {
+    await signInWithPopup(auth, googleProvider);
+  } catch (error) {}
+}
+
+async function createUser(email, password, name, lastname) {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    if (userCredential.user) {
+      updateProfile(userCredential.user, {
+        displayName: `${name} ${lastname}`,
+      });
+    }
+    return userCredential;
+  } catch (error) {
+    return error;
+  }
 }
 
 async function getFoodByName(
@@ -43,4 +90,14 @@ async function getFoodByName(
   return food[0];
 }
 
-export { app, db, storage, getCategoryFood, getFoodByName };
+export {
+  app,
+  db,
+  storage,
+  auth,
+  getCategoryFood,
+  getFoodByName,
+  loginWithEmailAndPassword,
+  createUser,
+  loginWithGoogle,
+};

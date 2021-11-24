@@ -11,15 +11,17 @@ function Button({
 }) {
   return (
     <>
-      <div {...props} className="button">
+      <button type="submit" {...props} className="button">
         {children}
-      </div>
+      </button>
       <style jsx>{`
         .button {
           display: flex;
           justify-content: center;
           align-items: center;
           width: fit-content;
+          font-size: 16px;
+          border: none;
           padding: ${padding};
           background: ${background ? background : "black"};
           color: ${color ? color : "white"};

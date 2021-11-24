@@ -9,8 +9,9 @@ import PopularFood from "@components/PopularFood";
 import { AiOutlineSearch } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import { db, getCategoryFood } from "../firebase";
+import { withAuthUser } from "next-firebase-auth";
 
-export default function Home() {
+function Home() {
   const [selectedCategory, setSelectedCategory] = useState("burgers");
   const [categoryData, setCategoryData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -54,6 +55,7 @@ export default function Home() {
   );
 }
 
+export default withAuthUser()(Home);
 const categoryFood = [
   {
     image: Hamburger,

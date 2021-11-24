@@ -4,7 +4,7 @@
   height: 100%;
 }
 .register > form {
-  width: 100%;
+  width: 75%;
   display: grid;
   place-items: center;
 }
@@ -16,7 +16,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  width: 75%;
+  width: 100%;
 }
 .text {
   font-size: 12px;

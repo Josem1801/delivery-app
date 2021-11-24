@@ -14,12 +14,12 @@ function Spinner({ size, color, strokeWidth, margin }) {
             animation: spinner 1s infinite cubic-bezier(0.27, 0.6, 0.54, 0.38);
           }
           .spinner--small {
-            width: 30px;
-            height: 30px;
+            width: 22px;
+            height: 22px;
           }
           .spinner--medium {
-            width: 45px;
-            height: 45px;
+            width: 30px;
+            height: 30px;
           }
           .spinner--large {
             width: 55px;

@@ -1,4 +1,3 @@
-import React from "react";
 import Head from "next/head";
 import styles from "@stylesComponents/Layout.module.css";
 import Image from "next/image";
@@ -8,20 +7,26 @@ import { BsThreeDots, BsBagDashFill } from "react-icons/bs";
 import { FiHeart, FiShoppingCart } from "react-icons/fi";
 import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
-
+import { useAuthUser } from "next-firebase-auth";
 import { AiOutlineUser } from "react-icons/ai";
-import { useSession } from "next-auth/react";
+import { memo, useEffect, useState } from "react";
+import MaleProfile from "../public/male.svg";
+import FemaleProfile from "../public/female.svg";
 function Layout({
   content,
   children,
   location,
   className,
-
   header = true,
   navbar = true,
 }) {
   const { pathname } = useRouter();
-  const { data: session } = useSession();
+  const authUser = useAuthUser();
+  const [female, setFemale] = useState();
+
+  useEffect(() => {
+    window.localStorage.getItem("gender") || false;
+  }, []);
 
   return (
     <div className={styles.layout}>
@@ -33,12 +38,20 @@ function Layout({
       {header ? (
         <header className={styles.layout__header}>
           <span className={styles.layout__headerPhoto}>
-            {session?.user.image ? (
-              <Image
-                src={session.user.image}
-                layout="fill"
-                alt={session.user.name}
-              />
+            {authUser.id ? (
+              authUser.photoURL ? (
+                <Image
+                  src={authUser.photoURL}
+                  layout="fill"
+                  alt={authUser.displayName}
+                />
+              ) : (
+                <Image
+                  src={female ? FemaleProfile : MaleProfile}
+                  alt={authUser?.displayName}
+                  layout="fill"
+                />
+              )
             ) : (
               <AiOutlineUser fontSize={25} />
             )}
@@ -78,7 +91,7 @@ function Layout({
   );
 }
 
-export default Layout;
+export default memo(Layout);
 
 const navbarData = [
   {
