@@ -1,6 +1,10 @@
 .login {
   height: 100%;
-  padding-top: 25%;
+  padding-top: 20%;
+}
+.login h1 {
+  text-align: center;
+  margin: 20px 0;
 }
 .button:hover {
   background: black;

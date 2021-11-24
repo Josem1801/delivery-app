@@ -35,7 +35,7 @@ function Login() {
   return (
     <Layout header={<HeaderBack />}>
       <section className={styles.login}>
-        <h1 style={{ textAlign: "center" }}>Inicia Sesion</h1>
+        <h1>Inicia Sesion</h1>
 
         <Input
           icon={<FiUser fontSize={18} />}
