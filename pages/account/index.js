@@ -14,14 +14,6 @@ import {
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
 import { auth } from "../../firebase";
-import Spinner from "@components/Spinner";
-export const getServerSideProps = withAuthUserTokenSSR({
-  whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
-})(() => {
-  return {
-    props: {},
-  };
-});
 
 function Account() {
   const authUser = useAuthUser();
