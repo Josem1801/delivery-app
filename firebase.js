@@ -39,7 +39,7 @@ async function getCategoryFood(db, category = "burgers") {
   return foodCategory;
 }
 
-async function loginWithEmailAndPassword(auth, email, password) {
+async function loginWithEmailAndPassword(email, password) {
   try {
     const userCredential = await signInWithEmailAndPassword(
       auth,

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import { AiOutlineEyeInvisible, AiOutlineEye } from "react-icons/ai";
-function SearchInput({
+
+const SearchInput = ({
   error,
   errorMessage,
   htmlFor,
@@ -11,7 +12,7 @@ function SearchInput({
   icon,
   type = "text",
   ...props
-}) {
+}) => {
   const [inputType, setInputType] = useState(type);
 
   return (
@@ -96,6 +97,6 @@ function SearchInput({
       `}</style>
     </>
   );
-}
+};
 
 export default SearchInput;

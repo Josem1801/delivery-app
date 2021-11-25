@@ -7,6 +7,8 @@ function Button({
   background,
   color,
   borderColor,
+  height,
+  width,
   ...props
 }) {
   return (
@@ -19,7 +21,8 @@ function Button({
           display: flex;
           justify-content: center;
           align-items: center;
-          width: fit-content;
+          height: ${height ? height : "fit-content"};
+          width: ${width ? width : "fit-content"};
           font-size: 16px;
           border: none;
           padding: ${padding};

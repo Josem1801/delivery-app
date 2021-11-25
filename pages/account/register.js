@@ -145,5 +145,5 @@ function Register() {
 }
 
 export default withAuthUser({
-  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_APP,
+  whenAuthed: AuthAction.REDIRECT_TO_APP,
 })(Register);
