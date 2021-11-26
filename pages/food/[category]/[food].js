@@ -27,8 +27,7 @@ function Food() {
   }
   function handleAddToCart() {
     if (authUser.id) {
-      console.log("holi");
-      addFoodToCartDB(data.name);
+      addFoodToCartDB(data.name).then(console.log);
     }
   }
   useEffect(() => {

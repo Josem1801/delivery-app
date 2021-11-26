@@ -43,7 +43,6 @@ function Login() {
               setErrorMessage(false);
             }, 5000);
           }
-          console.log(data.code);
           setLoading(false);
         })
         .catch((err) => {

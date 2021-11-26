@@ -17,6 +17,7 @@ import {
   query,
   doc,
   collectionGroup,
+  updateDoc,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -35,6 +36,7 @@ const db = getFirestore(app);
 const storage = getStorage();
 const auth = getAuth();
 const googleProvider = new GoogleAuthProvider();
+
 async function getCategoryFood(db, category = "burgers") {
   const foodCol = collection(db, `categorys/${category}/products`);
   const docs = await getDocs(foodCol);
@@ -93,15 +95,10 @@ async function getFoodByCollectionAndName(category, name) {
 }
 async function getFoodByName(name) {
   try {
-    // const foodCol = collection(db, "categorys", "burgers", "products");
-    // const foodDoc = doc(foodCol, "Yb49B3vcuHYkezBqimC6");
-    // const data = await getDoc(foodDoc);
-
     const food = query(
       collectionGroup(db, "products"),
-      where("name", "==", "Chipotle Cheesy chicken")
+      where("name", "==", name)
     );
-
     const data = await getDocs(food);
     const result = data.docs.map((data) => data.data());
     return result;
@@ -111,19 +108,58 @@ async function getFoodByName(name) {
 }
 
 async function addFoodToCartDB(product) {
-  const foodCol = collection(db, "users");
-  const userDoc = doc(foodCol, auth.currentUser.uid);
-  const data = await setDoc(userDoc, {
-    cart: [product],
-  });
-  console.log(data);
+  try {
+    const userDoc = doc(db, `users/${auth.currentUser.email}`);
+    const currentData = await getFoodCartArr(product);
+    const dataExist = currentData.includes(product);
+    if (dataExist) {
+      throw "error";
+    }
+    await setDoc(userDoc, {
+      cart: [product, ...currentData],
+    });
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getFoodCartArr() {
+  try {
+    const userDoc = doc(db, `users/${auth.currentUser.email}`);
+    const cartData = await getDoc(userDoc);
+    const currentData = cartData.data();
+    return currentData.cart;
+  } catch (err) {}
+}
+async function getFoodCart() {
+  try {
+    const data = await getFoodCartArr();
+
+    const listOfFood = await Promise.all(
+      data.map(async (name) => {
+        const food = await getFoodByName(name);
+        return food[0];
+      })
+    );
+
+    return listOfFood;
+  } catch (error) {}
+}
+
+async function deleteFoodCart(newCart) {
+  try {
+    const userDoc = doc(db, `users/${auth.currentUser.email}`);
+    await updateDoc(userDoc, { cart: newCart });
+  } catch (error) {}
 }
 export {
   app,
   db,
   storage,
   auth,
+  deleteFoodCart,
   addFoodToCartDB,
+  getFoodCart,
   getFoodByName,
   getCategoryFood,
   getFoodByCollectionAndName,

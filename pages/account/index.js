@@ -23,7 +23,6 @@ export const getServerSideProps = withAuthUserTokenSSR({
 
 function Account() {
   const authUser = useAuthUser();
-  console.log(authUser);
   const [female, setFemale] = useState();
   function handleGener() {
     setFemale(!female);
