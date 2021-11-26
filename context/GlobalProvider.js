@@ -1,18 +1,19 @@
 import { useReducer } from "react";
 import GlobalContext from "context/GlobalContext";
-useReducer;
+import appReducer from "context/appReducer";
 const initialState = {
   user: false,
   cart: [],
   favorites: [],
 };
-function GlobalProvider({ children }) {
-  const [state, payload] = useReducer(appReducer, initialState);
-  const value = { state, payload };
-  
+function UserProvider({ children }) {
+  const [state, dispatch] = useReducer(appReducer, initialState);
+
+  const value = { state, dispatch };
+
   return (
     <GlobalContext.Provider value={value}>{children}</GlobalContext.Provider>
   );
 }
 
-export default GlobalProvider;
+export default UserProvider;

@@ -12,6 +12,8 @@ import { AiOutlineUser } from "react-icons/ai";
 import { memo, useEffect, useState } from "react";
 import MaleProfile from "../public/male.svg";
 import FemaleProfile from "../public/female.svg";
+import GlobalContext from "context/GlobalContext";
+import { useContext } from "react";
 function Layout({
   content,
   children,
@@ -19,17 +21,22 @@ function Layout({
   className,
   header = true,
   navbar = true,
+  background,
 }) {
-  const { pathname } = useRouter();
+  const { pathname, push } = useRouter();
   const authUser = useAuthUser();
   const [female, setFemale] = useState();
+  const data = useContext(GlobalContext);
+  function hanldeAddToCart() {
+    push("/cart");
+  }
 
   useEffect(() => {
-    window.localStorage.getItem("gender") || false;
+    setFemale(window.localStorage.getItem("gender") || false);
   }, []);
 
   return (
-    <div className={styles.layout}>
+    <div className={styles.layout} style={{ backgroundColor: background }}>
       <Head>
         <title>Food delivery</title>
         <meta name="description" content={content} />
@@ -57,7 +64,11 @@ function Layout({
             )}
           </span>
           <span>Chicago, IL</span>
-          <FiShoppingCart fontSize={20} cursor="pointer" />
+          <FiShoppingCart
+            onClick={hanldeAddToCart}
+            fontSize={20}
+            cursor="pointer"
+          />
         </header>
       ) : (
         header

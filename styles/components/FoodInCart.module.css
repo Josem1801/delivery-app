@@ -1,0 +1,73 @@
+.layout {
+  background: white;
+}
+.container {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-areas:
+    "image name delete"
+    "image counter price";
+  align-items: center;
+  width: 100%;
+  min-width: 250px;
+  height: 125px;
+  font-weight: 700;
+  font-size: 17px;
+  padding: 0 22px;
+  box-shadow: 0 0 15px 2px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  background: white;
+}
+
+.container__image {
+  grid-area: image;
+}
+.container__name {
+  grid-area: name;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+  font-weight: 700;
+  margin-top: 5px;
+  padding: 0 10px;
+}
+.container__del {
+  grid-area: delete;
+  justify-self: end;
+  color: #c8161d;
+  margin-top: 10px;
+}
+
+.container__counter {
+  grid-area: counter;
+  display: grid;
+  grid-template-columns: 22px 1fr 22px;
+  grid-template-rows: 30px;
+  place-items: center;
+  justify-self: center;
+  width: 30%;
+  min-width: 80px;
+  border: 1px solid rgba(0, 0, 0, 0.116);
+  border-radius: 3px;
+}
+
+.container__counter button {
+  background: white;
+  border: none;
+  font-size: 22px;
+  color: #c8161d;
+  cursor: pointer;
+  outline: none;
+  height: fit-content;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.container__price {
+  grid-area: price;
+  justify-self: center;
+  font-weight: 700;
+}

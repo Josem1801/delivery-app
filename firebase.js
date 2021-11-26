@@ -10,12 +10,15 @@ import { initializeApp, getApp, getApps } from "firebase/app";
 import {
   getFirestore,
   getDocs,
+  getDoc,
   collection,
+  setDoc,
   where,
   query,
-} from "firebase/firestore/lite";
+  doc,
+  collectionGroup,
+} from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import { getCsrfToken } from "next-auth/react";
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -46,6 +49,7 @@ async function loginWithEmailAndPassword(email, password) {
       email,
       password
     );
+
     return userCredential;
   } catch (err) {
     return err;
@@ -55,7 +59,9 @@ async function loginWithEmailAndPassword(email, password) {
 async function loginWithGoogle() {
   try {
     await signInWithPopup(auth, googleProvider);
-  } catch (error) {}
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function createUser(email, password, name, lastname) {
@@ -76,11 +82,7 @@ async function createUser(email, password, name, lastname) {
   }
 }
 
-async function getFoodByName(
-  db,
-  category = "burgers",
-  name = "Chipotle Cheesy chicken"
-) {
+async function getFoodByCollectionAndName(category, name) {
   const foodCol = collection(db, "categorys", category, "products");
   const q = query(foodCol, where("name", "==", name));
   const foodDoc = await getDocs(q);
@@ -89,14 +91,42 @@ async function getFoodByName(
   });
   return food[0];
 }
+async function getFoodByName(name) {
+  try {
+    // const foodCol = collection(db, "categorys", "burgers", "products");
+    // const foodDoc = doc(foodCol, "Yb49B3vcuHYkezBqimC6");
+    // const data = await getDoc(foodDoc);
 
+    const food = query(
+      collectionGroup(db, "products"),
+      where("name", "==", "Chipotle Cheesy chicken")
+    );
+
+    const data = await getDocs(food);
+    const result = data.docs.map((data) => data.data());
+    return result;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function addFoodToCartDB(product) {
+  const foodCol = collection(db, "users");
+  const userDoc = doc(foodCol, auth.currentUser.uid);
+  const data = await setDoc(userDoc, {
+    cart: [product],
+  });
+  console.log(data);
+}
 export {
   app,
   db,
   storage,
   auth,
-  getCategoryFood,
+  addFoodToCartDB,
   getFoodByName,
+  getCategoryFood,
+  getFoodByCollectionAndName,
   loginWithEmailAndPassword,
   createUser,
   loginWithGoogle,

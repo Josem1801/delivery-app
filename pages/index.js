@@ -23,6 +23,7 @@ function Home() {
     getCategoryFood(db, selectedCategory)
       .then((data) => {
         setCategoryData(data);
+
         setLoading(false);
       })
       .catch((err) => {
