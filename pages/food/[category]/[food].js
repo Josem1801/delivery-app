@@ -12,7 +12,8 @@ import { useAuthUser } from "next-firebase-auth";
 import Spinner from "@components/Spinner";
 import GlobalContext from "context/GlobalContext";
 import { FaHeart } from "react-icons/fa";
-import setCartLocalStorage from "context/utils/setCartLocalStorage";
+import setLocalStorage from "context/utils/setLocalStorage";
+import { KEY_CART, KEY_FAVORITES } from "context/utils/types";
 
 function Food() {
   const [data, setData] = useState([]);
@@ -22,24 +23,23 @@ function Food() {
   const [multiplierNumber, setMultiplierNumber] = useState(0);
   const [favorite, setFavorite] = useState(false);
   const authUser = useAuthUser();
-  const { addToCart, cart } = useContext(GlobalContext);
+  const { addToCart, cart, favorites } = useContext(GlobalContext);
   const food = useRouter().query.food;
   const category = useRouter().query.category;
   function handleFavorite() {
-    setFavorite(!favorite);
+    setLocalStorage(KEY_FAVORITES, [...favorites, data.name]);
   }
   function handleSquare(symbol, price) {
     setSelectedSize(symbol);
     setMultiplierNumber(price);
   }
+
   async function handleAddToCart() {
     if (authUser.id) {
       await addFoodToCartDB(data.name);
-      addToCart(data.name);
-      setCartLocalStorage([...cart, data.name]);
-      return;
     }
-    alert("Inicia sesión para agregar al carrito");
+    addToCart(data.name);
+    setLocalStorage(KEY_CART, [...cart, data.name]);
   }
   useEffect(() => {
     setLoader(true);

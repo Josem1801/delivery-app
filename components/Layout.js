@@ -26,7 +26,7 @@ function Layout({
   const { pathname, push } = useRouter();
   const authUser = useAuthUser();
   const [female, setFemale] = useState();
-  const data = useContext(GlobalContext);
+  const { cart } = useContext(GlobalContext);
   function hanldeAddToCart() {
     push("/cart");
   }
@@ -64,11 +64,14 @@ function Layout({
             )}
           </span>
           <span>Chicago, IL</span>
-          <FiShoppingCart
-            onClick={hanldeAddToCart}
-            fontSize={20}
-            cursor="pointer"
-          />
+          <div className={styles.cart__container}>
+            <FiShoppingCart
+              onClick={hanldeAddToCart}
+              fontSize={20}
+              cursor="pointer"
+            />
+            <span className={styles.notifications}>{Number(cart?.length)}</span>
+          </div>
         </header>
       ) : (
         header

@@ -1,0 +1,4 @@
+const KEY_CART = "CART";
+const KEY_FAVORITES = "FAVORITES";
+
+export { KEY_CART, KEY_FAVORITES };

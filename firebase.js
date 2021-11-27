@@ -6,6 +6,8 @@ import {
   signInWithPopup,
   updateProfile,
 } from "@firebase/auth";
+import GetLocalStorage from "context/utils/getLocalStorage";
+import { KEY_CART } from "context/utils/types";
 import { initializeApp, getApp, getApps } from "firebase/app";
 import {
   getFirestore,
@@ -85,12 +87,14 @@ async function createUser(email, password, name, lastname) {
 }
 
 async function getFoodByCollectionAndName(category, name) {
+  if (!category && !name) return [];
   const foodCol = collection(db, "categorys", category, "products");
   const q = query(foodCol, where("name", "==", name));
   const foodDoc = await getDocs(q);
   const food = foodDoc.docs.map((doc) => {
     return doc.data();
   });
+
   return food[0];
 }
 async function getFoodByName(name) {
@@ -136,8 +140,11 @@ async function getFoodCartArr() {
 }
 async function getFoodCart() {
   try {
-    const data = await getFoodCartArr();
-
+    let data;
+    data = await getFoodCartArr();
+    if (!data && !auth.currentUser) {
+      data = GetLocalStorage(KEY_CART);
+    }
     const listOfFood = await Promise.all(
       data.map(async (name) => {
         const food = await getFoodByName(name);

@@ -18,6 +18,23 @@
   padding: 0 15px;
   max-height: 90px;
 }
+.cart__container {
+  position: relative;
+}
+.notifications {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  width: 15px;
+  height: 15px;
+  color: whtie;
+  background: crimson;
+  color: white;
+  border-radius: 50%;
+  top: -7.5px;
+  right: -7.5px;
+}
 .layout__headerPhoto {
   position: relative;
   width: 40px;

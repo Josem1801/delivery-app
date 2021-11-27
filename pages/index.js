@@ -22,9 +22,10 @@ function Home() {
     setSelectedCategory(category.toLowerCase());
   }
   useEffect(() => {
-    getCart().then((data) => {
-      window.localStorage.setItem("CART", JSON.stringify(data));
-    });
+    if (authUser.id)
+      getCart().then((data) => {
+        window.localStorage.setItem("CART", JSON.stringify(data));
+      });
   }, [authUser.id]);
   useEffect(() => {
     setLoading(true);

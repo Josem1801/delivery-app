@@ -2,13 +2,14 @@ import { useReducer } from "react";
 import GlobalContext from "context/GlobalContext";
 import appReducer from "context/appReducer";
 import { getFoodCartArr } from "../firebase";
-import GetCartLocalStorage from "./utils/getCartLocalStorage";
+import GetLocalStorage from "./utils/getLocalStorage";
+import { KEY_CART, KEY_FAVORITES } from "./utils/types";
 
 function UserProvider({ children }) {
   const initialState = {
     user: false,
-    cart: GetCartLocalStorage(),
-    favorites: [],
+    cart: GetLocalStorage(KEY_CART),
+    favorites: GetLocalStorage(KEY_FAVORITES),
   };
 
   const [state, dispatch] = useReducer(appReducer, initialState);
@@ -27,8 +28,21 @@ function UserProvider({ children }) {
       if (data !== undefined) return data;
     } catch (error) {}
   }
+  function addFavorites(food) {
+    dispatch({ payload: food, type: "ADD_FAVORITES" });
+  }
+  function getFavorites(food) {
+    dispatch({ payload: food, type: "ADD_FAVORITES" });
+  }
+  function removeFavorites(food) {
+    dispatch({ payload: food, type: "ADD_FAVORITES" });
+  }
   const value = {
     cart: state.cart,
+    favorites: state.favorites,
+    getFavorites,
+    removeFavorites,
+    addFavorites,
     getCart,
     addToCart,
     removeCart,

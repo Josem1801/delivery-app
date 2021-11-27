@@ -1,47 +1,39 @@
 import FoodInCart from "@components/FoodInCart";
 import HeaderBack from "@components/HeaderBack";
 import Layout from "@components/Layout";
-import { getFoodCart, deleteFoodCart, db } from "../firebase";
+import { getFoodCart, deleteFoodCart } from "../firebase";
 import { useAuthUser } from "next-firebase-auth";
 import React, { memo, useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Spinner from "@components/Spinner";
-import setCartLocalStorage from "context/utils/setCartLocalStorage";
+import setLocalStorage from "context/utils/setLocalStorage";
+import { KEY_CART } from "context/utils/types";
 
 function Cart() {
   const authUser = useAuthUser();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+
   function handleDelete(food) {
     const filterCart = data.filter(({ name }) => name !== food);
     setData(filterCart);
     const newCart = filterCart.map(({ name }) => name);
     deleteFoodCart(newCart);
-    setCartLocalStorage(newCart);
+
+    setLocalStorage(KEY_CART, newCart);
   }
   useEffect(() => {
     setLoading(true);
     const getCart = async () => {
       const food = await getFoodCart();
       setData(food);
+
       setLoading(false);
     };
+
     getCart();
   }, [authUser.id]);
-  if (!authUser.id) {
-    return (
-      <Layout background="white" header={false}>
-        <HeaderBack
-          white
-          iconRight={<BsThreeDotsVertical fontSize={18} />}
-          title="Cart"
-        />
-        <p style={{ textAlign: "center" }}>
-          Inicia sesion para agregar cosas al carrito
-        </p>
-      </Layout>
-    );
-  }
+
   return (
     <Layout background="white" header={false}>
       <HeaderBack
