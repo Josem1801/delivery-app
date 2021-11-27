@@ -23,7 +23,6 @@ function Food() {
   const [favorite, setFavorite] = useState(false);
   const authUser = useAuthUser();
   const { addToCart, cart } = useContext(GlobalContext);
-  console.log(cart);
   const food = useRouter().query.food;
   const category = useRouter().query.category;
   function handleFavorite() {
@@ -38,7 +37,9 @@ function Food() {
       await addFoodToCartDB(data.name);
       addToCart(data.name);
       setCartLocalStorage([...cart, data.name]);
+      return;
     }
+    alert("Inicia sesión para agregar al carrito");
   }
   useEffect(() => {
     setLoader(true);

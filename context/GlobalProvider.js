@@ -3,7 +3,6 @@ import GlobalContext from "context/GlobalContext";
 import appReducer from "context/appReducer";
 import { getFoodCartArr } from "../firebase";
 import GetCartLocalStorage from "./utils/getCartLocalStorage";
-import setCartLocalStorage from "./utils/setCartLocalStorage";
 
 function UserProvider({ children }) {
   const initialState = {
@@ -11,9 +10,8 @@ function UserProvider({ children }) {
     cart: GetCartLocalStorage(),
     favorites: [],
   };
-  console.log(GetCartLocalStorage());
+
   const [state, dispatch] = useReducer(appReducer, initialState);
-  console.log(state);
 
   function addToCart(food) {
     dispatch({ payload: food, type: "ADD_CART" });
