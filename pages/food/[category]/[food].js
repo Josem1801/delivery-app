@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/dist/client/router";
 import { getFoodByCollectionAndName, addFoodToCartDB } from "../../../firebase";
 import Layout from "@components/Layout";
@@ -10,24 +10,34 @@ import Square from "@components/Square";
 import { FiShoppingBag } from "react-icons/fi";
 import { useAuthUser } from "next-firebase-auth";
 import Spinner from "@components/Spinner";
-import useCart from "hooks/useCart";
+import GlobalContext from "context/GlobalContext";
+import { FaHeart } from "react-icons/fa";
+import setCartLocalStorage from "context/utils/setCartLocalStorage";
+
 function Food() {
   const [data, setData] = useState([]);
   const [loader, setLoader] = useState(true);
   const [selectedSize, setSelectedSize] = useState("M");
   const [counter, setCounter] = useState(1);
   const [multiplierNumber, setMultiplierNumber] = useState(0);
+  const [favorite, setFavorite] = useState(false);
   const authUser = useAuthUser();
-
+  const { addToCart, cart } = useContext(GlobalContext);
+  console.log(cart);
   const food = useRouter().query.food;
   const category = useRouter().query.category;
+  function handleFavorite() {
+    setFavorite(!favorite);
+  }
   function handleSquare(symbol, price) {
     setSelectedSize(symbol);
     setMultiplierNumber(price);
   }
-  function handleAddToCart() {
+  async function handleAddToCart() {
     if (authUser.id) {
-      addFoodToCartDB(data.name).then(console.log);
+      await addFoodToCartDB(data.name);
+      addToCart(data.name);
+      setCartLocalStorage([...cart, data.name]);
     }
   }
   useEffect(() => {
@@ -35,7 +45,6 @@ function Food() {
     getFoodByCollectionAndName(category, food)
       .then((food) => {
         setData(food);
-
         setLoader(false);
       })
       .catch((err) => {
@@ -47,7 +56,13 @@ function Food() {
     <Layout className={styles.container} header={false} navbar={false}>
       <HeaderBack
         background="white"
-        iconRight={<BiHeart fontSize={24} color="#C8161D" />}
+        iconRight={
+          favorite ? (
+            <FaHeart onClick={handleFavorite} fontSize={23} color="#C8161D" />
+          ) : (
+            <BiHeart onClick={handleFavorite} fontSize={24} color="#C8161D" />
+          )
+        }
       />
       {loader ? (
         <Spinner margin="350px auto 0 auto" />
@@ -96,8 +111,18 @@ function Food() {
       </div>
       <div className={styles.bottom}>
         <span className={styles.textPrice}>Price</span>
-        <button className={styles.addToCart} onClick={handleAddToCart}>
-          <FiShoppingBag /> Add to Cart
+        <button
+          disabled={cart?.includes(data.name)}
+          className={styles.addToCart}
+          onClick={handleAddToCart}
+        >
+          {cart?.includes(data.name) ? (
+            "Añadido"
+          ) : (
+            <>
+              <FiShoppingBag /> Add to Cart
+            </>
+          )}
         </button>
 
         <span className={styles.price}>

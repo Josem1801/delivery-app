@@ -1,11 +1,12 @@
 import FoodInCart from "@components/FoodInCart";
 import HeaderBack from "@components/HeaderBack";
 import Layout from "@components/Layout";
-import { getFoodCart, deleteFoodCart } from "../firebase";
+import { getFoodCart, deleteFoodCart, db } from "../firebase";
 import { useAuthUser } from "next-firebase-auth";
 import React, { memo, useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Spinner from "@components/Spinner";
+import setCartLocalStorage from "context/utils/setCartLocalStorage";
 
 function Cart() {
   const authUser = useAuthUser();
@@ -16,14 +17,17 @@ function Cart() {
     setData(filterCart);
     const newCart = filterCart.map(({ name }) => name);
     deleteFoodCart(newCart);
+    setCartLocalStorage(newCart);
   }
   useEffect(() => {
     setLoading(true);
-    getFoodCart().then((cart) => {
-      setData(cart);
+    const getCart = async () => {
+      const food = await getFoodCart();
+      setData(food);
       setLoading(false);
-    });
-  }, []);
+    };
+    getCart();
+  }, [authUser.id]);
   if (!authUser.id) {
     return (
       <Layout background="white" header={false}>
@@ -47,10 +51,10 @@ function Cart() {
       />
       {loading ? (
         <Spinner />
-      ) : data.length === 0 ? (
+      ) : data?.length === 0 ? (
         "Aun no tienes nada en tu carrito :c"
       ) : (
-        data.map(({ price, name, image }, idx) => (
+        data?.map(({ price, name, image }, idx) => (
           <FoodInCart
             key={idx}
             price={price}

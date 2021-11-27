@@ -7,17 +7,25 @@ import Input from "@components/Input";
 import Papas from "../public/papas.svg";
 import PopularFood from "@components/PopularFood";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { db, getCategoryFood } from "../firebase";
-import { withAuthUser } from "next-firebase-auth";
+import { useAuthUser, withAuthUser } from "next-firebase-auth";
+import GlobalContext from "context/GlobalContext";
 
 function Home() {
   const [selectedCategory, setSelectedCategory] = useState("burgers");
   const [categoryData, setCategoryData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { getCart } = useContext(GlobalContext);
+  const authUser = useAuthUser();
   function handleCategory(category) {
     setSelectedCategory(category.toLowerCase());
   }
+  useEffect(() => {
+    getCart().then((data) => {
+      window.localStorage.setItem("CART", JSON.stringify(data));
+    });
+  }, [authUser.id]);
   useEffect(() => {
     setLoading(true);
     getCategoryFood(db, selectedCategory)

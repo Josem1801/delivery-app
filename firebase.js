@@ -118,6 +118,7 @@ async function addFoodToCartDB(product) {
     await setDoc(userDoc, {
       cart: [product, ...currentData],
     });
+    return product;
   } catch (err) {
     throw err;
   }
@@ -125,11 +126,13 @@ async function addFoodToCartDB(product) {
 
 async function getFoodCartArr() {
   try {
-    const userDoc = doc(db, `users/${auth.currentUser.email}`);
+    const userDoc = doc(db, `users/${auth.currentUser?.email}`);
     const cartData = await getDoc(userDoc);
     const currentData = cartData.data();
-    return currentData.cart;
-  } catch (err) {}
+    return currentData?.cart;
+  } catch (err) {
+    throw err;
+  }
 }
 async function getFoodCart() {
   try {
@@ -159,6 +162,7 @@ export {
   auth,
   deleteFoodCart,
   addFoodToCartDB,
+  getFoodCartArr,
   getFoodCart,
   getFoodByName,
   getCategoryFood,
