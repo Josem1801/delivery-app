@@ -114,7 +114,7 @@ async function getFoodByName(name) {
 async function addFoodToCartDB(product) {
   try {
     const userDoc = doc(db, `users/${auth.currentUser.email}`);
-    const currentData = await getFoodCartArr(product);
+    const currentData = await getFoodCartArr();
     const dataExist = currentData.includes(product);
     if (dataExist) {
       throw "error";
@@ -127,7 +127,22 @@ async function addFoodToCartDB(product) {
     throw err;
   }
 }
-
+async function addFoodToFavoritesDB(product) {
+  try {
+    const userDoc = doc(db, `users/${auth.currentUser.email}`);
+    const currentData = await getFoodCartArr();
+    const dataExist = currentData.includes(product);
+    if (dataExist) {
+      throw "error";
+    }
+    await setDoc(userDoc, {
+      favorites: [product, ...currentData],
+    });
+    return product;
+  } catch (err) {
+    throw err;
+  }
+}
 async function getFoodCartArr() {
   try {
     const userDoc = doc(db, `users/${auth.currentUser?.email}`);
@@ -138,13 +153,15 @@ async function getFoodCartArr() {
     throw err;
   }
 }
-async function getFoodCart() {
+
+async function getFoodCart(dataNoLogin) {
   try {
     let data;
     data = await getFoodCartArr();
     if (!data && !auth.currentUser) {
-      data = GetLocalStorage(KEY_CART);
+      data = dataNoLogin;
     }
+    if (dataNoLogin.length < 1) return [];
     const listOfFood = await Promise.all(
       data.map(async (name) => {
         const food = await getFoodByName(name);
@@ -168,6 +185,7 @@ export {
   storage,
   auth,
   deleteFoodCart,
+  addFoodToFavoritesDB,
   addFoodToCartDB,
   getFoodCartArr,
   getFoodCart,

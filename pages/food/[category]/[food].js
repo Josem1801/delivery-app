@@ -21,13 +21,36 @@ function Food() {
   const [selectedSize, setSelectedSize] = useState("M");
   const [counter, setCounter] = useState(1);
   const [multiplierNumber, setMultiplierNumber] = useState(0);
-  const [favorite, setFavorite] = useState(false);
+
   const authUser = useAuthUser();
-  const { addToCart, cart, favorites } = useContext(GlobalContext);
+  const { addToCart, cart, favorites, removeFavorite, addFavorite } =
+    useContext(GlobalContext);
   const food = useRouter().query.food;
   const category = useRouter().query.category;
-  function handleFavorite() {
-    setLocalStorage(KEY_FAVORITES, [...favorites, data.name]);
+
+  async function handleFavorite() {
+    if (authUser.id) {
+      await addFoodToFavoritesDB({ name: data.name, category });
+    }
+    addFavorite({ name: data.name, category });
+    setLocalStorage(KEY_FAVORITES, [
+      ...favorites,
+      { name: data.name, category },
+    ]);
+  }
+
+  function itsInFavorite(nameFood) {
+    return favorites.some(({ name }) => name === nameFood);
+  }
+  async function handleFavoriteRemove() {
+    const filterFavorite = favorites.filter(({ name }) => name !== data.name);
+
+    if (authUser.id) {
+      deleteFoodCart(newCart);
+    }
+
+    removeFavorite(data.name);
+    setLocalStorage(KEY_FAVORITES, filterFavorite);
   }
   function handleSquare(symbol, price) {
     setSelectedSize(symbol);
@@ -58,8 +81,12 @@ function Food() {
       <HeaderBack
         background="white"
         iconRight={
-          favorite ? (
-            <FaHeart onClick={handleFavorite} fontSize={23} color="#C8161D" />
+          itsInFavorite(data.name) ? (
+            <FaHeart
+              onClick={handleFavoriteRemove}
+              fontSize={23}
+              color="#C8161D"
+            />
           ) : (
             <BiHeart onClick={handleFavorite} fontSize={24} color="#C8161D" />
           )

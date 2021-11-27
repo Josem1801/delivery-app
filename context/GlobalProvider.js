@@ -13,7 +13,7 @@ function UserProvider({ children }) {
   };
 
   const [state, dispatch] = useReducer(appReducer, initialState);
-
+  console.log(state);
   function addToCart(food) {
     dispatch({ payload: food, type: "ADD_CART" });
   }
@@ -28,21 +28,19 @@ function UserProvider({ children }) {
       if (data !== undefined) return data;
     } catch (error) {}
   }
-  function addFavorites(food) {
-    dispatch({ payload: food, type: "ADD_FAVORITES" });
+  function addFavorite(food) {
+    dispatch({ payload: food, type: "ADD_FAVORITE" });
   }
-  function getFavorites(food) {
-    dispatch({ payload: food, type: "ADD_FAVORITES" });
-  }
-  function removeFavorites(food) {
-    dispatch({ payload: food, type: "ADD_FAVORITES" });
+
+  function removeFavorite(food) {
+    dispatch({ payload: food, type: "REMOVE_FAVORITE" });
   }
   const value = {
     cart: state.cart,
     favorites: state.favorites,
-    getFavorites,
-    removeFavorites,
-    addFavorites,
+    addFavorite,
+    removeFavorite,
+    addFavorite,
     getCart,
     addToCart,
     removeCart,

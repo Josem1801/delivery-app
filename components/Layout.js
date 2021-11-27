@@ -70,7 +70,9 @@ function Layout({
               fontSize={20}
               cursor="pointer"
             />
-            <span className={styles.notifications}>{Number(cart?.length)}</span>
+            {cart?.length > 0 && (
+              <span className={styles.notifications}>{cart?.length}</span>
+            )}
           </div>
         </header>
       ) : (

@@ -11,10 +11,19 @@ function appReducer(state, action) {
       if (state.cart.includes(payload)) return { ...state };
       return { ...state, cart: [...state.cart, payload] };
     case "REMOVE_CART":
-      return state.cart.filter((name) => name !== payload);
+      return { ...state, cart: payload };
     case "SET_CART":
       return { ...state, cart: payload };
     default:
+    case "REMOVE_FAVORITE":
+      return {
+        ...state,
+        favorites: state.favorites.filter(({ name }) => name !== payload),
+      };
+    case "ADD_FAVORITE":
+      if (payload === undefined) return { ...state };
+      if (state.cart.includes(payload.favorite)) return { ...state };
+      return { ...state, favorites: [...state.favorites, payload] };
       break;
   }
 }
