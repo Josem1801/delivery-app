@@ -40,7 +40,7 @@ function Food() {
   }
 
   function itsInFavorite(nameFood) {
-    return favorites.some(({ name }) => name === nameFood);
+    return favorites?.some(({ name }) => name === nameFood);
   }
   async function handleFavoriteRemove() {
     const filterFavorite = favorites.filter(({ name }) => name !== data.name);
