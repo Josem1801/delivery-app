@@ -33,41 +33,56 @@ function Food() {
   const food = useRouter().query.food;
   const category = useRouter().query.category;
 
-  async function handleFavorite() {
-    addFavorite({ name: data.name, category });
-    setLocalStorage(KEY_FAVORITES, [
-      ...favorites,
-      { name: data.name, category },
-    ]);
-    if (authUser.id) {
-      await addFoodToFavoritesDB({ name: data.name, category });
+  async function handleAddFavorite() {
+    if (!itsInFavorite()) {
+      addFavorite({ name: data.name, category });
+      setLocalStorage(KEY_FAVORITES, [
+        ...favorites,
+        { name: data.name, category },
+      ]);
+      if (authUser.id) {
+        await addFoodToFavoritesDB({ name: data.name, category });
+      }
     }
   }
 
-  function itsInFavorite(nameFood) {
-    return favorites?.some(({ name }) => name === nameFood);
+  function itsInFavorite() {
+    return favorites?.some(({ name }) => name === data.name);
   }
+  function itsInCart() {
+    return cart?.some(({ name }) => name === data.name);
+  }
+
   async function handleFavoriteRemove() {
     const filterFavorite = favorites.filter(({ name }) => name !== data.name);
     if (authUser.id) {
       deleteFoodFavoriteDB(filterFavorite);
     }
-
     removeFavorite(data.name);
     setLocalStorage(KEY_FAVORITES, filterFavorite);
   }
+
+  async function handleAddToCart() {
+    if (!itsInCart()) {
+      const dataToCart = {
+        name: data.name,
+        amount: counter,
+        price: (data.price + multiplierNumber)?.toFixed(1),
+        image: data.image,
+      };
+      addToCart(dataToCart);
+      setLocalStorage(KEY_CART, [...cart, dataToCart]);
+      if (authUser.id) {
+        await addFoodToCartDB(dataToCart);
+      }
+    }
+  }
+
   function handleSquare(symbol, price) {
     setSelectedSize(symbol);
     setMultiplierNumber(price);
   }
 
-  async function handleAddToCart() {
-    if (authUser.id) {
-      await addFoodToCartDB(data.name);
-    }
-    addToCart(data.name);
-    setLocalStorage(KEY_CART, [...cart, data.name]);
-  }
   useEffect(() => {
     setLoader(true);
     getFoodByCollectionAndName(category, food)
@@ -92,7 +107,11 @@ function Food() {
               color="#C8161D"
             />
           ) : (
-            <BiHeart onClick={handleFavorite} fontSize={24} color="#C8161D" />
+            <BiHeart
+              onClick={handleAddFavorite}
+              fontSize={24}
+              color="#C8161D"
+            />
           )
         }
       />
@@ -144,11 +163,11 @@ function Food() {
       <div className={styles.bottom}>
         <span className={styles.textPrice}>Price</span>
         <button
-          disabled={cart?.includes(data.name)}
+          disabled={itsInCart(cart.name)}
           className={styles.addToCart}
           onClick={handleAddToCart}
         >
-          {cart?.includes(data.name) ? (
+          {itsInCart(cart.name) ? (
             "Añadido"
           ) : (
             <>

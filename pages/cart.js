@@ -66,22 +66,6 @@ function Cart() {
     removeCart(filterCart);
     setLocalStorage(KEY_CART, newCart);
   }
-  useEffect(() => {
-    setLoading(true);
-    const getCart = async () => {
-      if (!authUser.id) {
-        const food = await getFoodCart(cart);
-        setData(food);
-      }
-      if (authUser.id) {
-        const food = await getFoodCart();
-        setData(food);
-      }
-      setLoading(false);
-    };
-
-    getCart();
-  }, [cart, authUser.id]);
 
   return (
     <Layout background="white" header={false}>
@@ -93,22 +77,23 @@ function Cart() {
       />
       {loading ? (
         <Spinner />
-      ) : data?.length === 0 ? (
+      ) : cart?.length === 0 ? (
         <p style={{ textAlign: "center" }}>
           Aun no tienes nada en tu carrito :c
         </p>
       ) : (
-        data?.map(({ price, name, image }, idx) => (
+        cart?.map(({ price, name, image, amount }, idx) => (
           <FoodInCart
             key={idx}
             price={price}
             name={name}
             image={image}
+            initialCounter={amount}
             handleDelete={handleDelete}
           />
         ))
       )}
-      {data?.length > 0 && (
+      {cart?.length > 0 && (
         <>
           <form onSubmit={handleCheckout}>
             <Button className="checkout" width="100%" height="50px">

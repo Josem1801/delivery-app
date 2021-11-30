@@ -1,12 +1,13 @@
-import React from "react";
+import React, { useRef } from "react";
 import Link from "next/link";
 import styles from "@stylesComponents/PopularFood.module.css";
 import PopularFoodCard from "./PopularFoodCard";
 import { AiOutlineRight } from "react-icons/ai";
 import Spinner from "./Spinner";
-function PopularFood({ loading, foodName, foodData = [], category, ref }) {
+import useLazyFood from "hooks/useLazyFood";
+function PopularFood({ loading, foodName, foodData = [], category }) {
   return (
-    <div className={styles.container} ref={ref}>
+    <div className={styles.container}>
       <div className={styles.header}>
         <span>Popular</span>
         <Link passHref href={`/${foodName}-all`}>

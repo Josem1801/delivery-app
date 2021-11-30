@@ -1,13 +1,13 @@
 .container {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 80px 1fr 80px;
   grid-template-rows: repeat(2, 1fr);
   grid-template-areas:
     "image name delete"
     "image counter price";
   align-items: center;
   width: 100%;
-  min-width: 250px;
+  min-width: 275px;
   height: 125px;
   font-weight: 700;
   font-size: 17px;
@@ -67,6 +67,8 @@
 
 .container__price {
   grid-area: price;
-  justify-self: center;
+  justify-self: end;
   font-weight: 700;
+
+  text-align: end;
 }

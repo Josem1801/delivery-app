@@ -37,7 +37,9 @@ function FoodInCart({ initialCounter = 1, image, name, price, handleDelete }) {
         </button>
       </div>
 
-      <span className={styles.container__price}>${price}</span>
+      <span className={styles.container__price}>
+        ${(counter * price).toFixed(1)}
+      </span>
     </div>
   );
 }

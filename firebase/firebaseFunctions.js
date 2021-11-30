@@ -9,7 +9,8 @@ import {
   doc,
   collectionGroup,
   updateDoc,
-  addDoc,
+  limit,
+  startAfter,
 } from "firebase/firestore";
 
 import {
@@ -22,10 +23,21 @@ import {
 
 const googleProvider = new GoogleAuthProvider();
 
-async function getCategoryFood(category = "burgers") {
-  const foodCol = collection(db, `categorys/${category}/products`);
-  const docs = await getDocs(foodCol);
-  const foodCategory = docs.docs.map((category) => category.data());
+async function getCategoryFood(category = "burgers", limite) {
+  const foodCol = query(
+    collection(db, `categorys/${category}/products`),
+    limit(limite)
+  );
+  const foodDocs = await getDocs(foodCol);
+  const foodCategory = foodDocs.docs.map((category) => category.data());
+
+  const lastVisible = foodDocs.docs[foodDocs.docs.length - 1];
+  const next = query(
+    collection(db, `categorys/${category}/products`),
+    startAfter(lastVisible),
+    limit(limite)
+  );
+
   return foodCategory;
 }
 
@@ -100,13 +112,10 @@ async function addFoodToCartDB(product) {
   try {
     const userDoc = doc(db, `users/${auth.currentUser.email}`);
     const currentData = await getUserData();
-    if (currentData.cart) {
-      const dataExist = currentData.cart.includes(product.name);
-      if (dataExist) {
-        throw "error";
-      }
+    const dataExist = currentData.cart.includes(product.name);
+    if (dataExist) {
+      throw "error";
     }
-
     const data = currentData.cart ? currentData.cart : "";
     await setDoc(userDoc, {
       ...currentData,
@@ -121,12 +130,7 @@ async function addFoodToFavoritesDB(product) {
   try {
     const userDoc = doc(db, `users/${auth.currentUser.email}`);
     const currentData = await getUserData();
-    if (currentData.favorites) {
-      const dataExist = currentData.favorites.includes(product.name);
-      if (dataExist) {
-        throw "error";
-      }
-    }
+
     const data = currentData.favorites ? currentData.favorites : {};
     await setDoc(userDoc, {
       ...currentData,
@@ -141,8 +145,15 @@ async function getUserData() {
   try {
     const userDoc = doc(db, `users/${auth.currentUser?.email}`);
     const userData = await getDoc(userDoc);
-    const currentData = userData.data();
-    return currentData;
+    if (!userData.exists()) {
+      await setDoc(doc(db, `users/${auth.currentUser?.email}`), {
+        cart: [],
+        favorites: [],
+      });
+      const newUserData = await getDoc(userDoc);
+      return newUserData.data();
+    }
+    return userData.data();
   } catch (err) {
     throw err;
   }
@@ -151,12 +162,11 @@ async function getUserData() {
 async function getFoodCart(dataNoLogin) {
   try {
     let data;
-
     data = await getUserData();
     if (!auth.currentUser) {
       data = dataNoLogin;
       const listOfFood = await Promise.all(
-        data.map(async (name) => {
+        data.map(async ({ name }) => {
           const food = await getFoodByName(name);
           return food[0];
         })
@@ -164,7 +174,7 @@ async function getFoodCart(dataNoLogin) {
       return listOfFood;
     }
     const listOfFood = await Promise.all(
-      data.cart.map(async (name) => {
+      data.cart.map(async ({ name }) => {
         const food = await getFoodByName(name);
         return food[0];
       })

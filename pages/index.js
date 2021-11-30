@@ -7,22 +7,24 @@ import Input from "@components/Input";
 import Papas from "../public/papas.svg";
 import PopularFood from "@components/PopularFood";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useContext, useEffect, useState, memo } from "react";
+import { useEffect, useState, memo, useRef } from "react";
 import { getCategoryFood } from "@firebaseFunctions";
-import { useAuthUser, withAuthUser } from "next-firebase-auth";
-import GlobalContext from "context/GlobalContext";
-
+import { withAuthUser } from "next-firebase-auth";
+import useLazyFood from "hooks/useLazyFood";
+import styles from "@stylesPages/Home.module.css";
 function Home() {
   const [selectedCategory, setSelectedCategory] = useState("burgers");
   const [categoryData, setCategoryData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const elementRef = useRef();
+  const { show } = useLazyFood(elementRef.current);
   function handleCategory(category) {
     setSelectedCategory(category.toLowerCase());
   }
 
   useEffect(() => {
     setLoading(true);
-    getCategoryFood(selectedCategory)
+    getCategoryFood(selectedCategory, 3)
       .then((data) => {
         setCategoryData(data);
         setLoading(false);
@@ -35,9 +37,7 @@ function Home() {
   return (
     <Layout>
       <h1>Hey!</h1>
-      <span style={{ color: "gray", fontWeight: 400, fontSize: 14 }}>
-        Lets get your order
-      </span>
+      <span className={styles.subtitle}>Lets get your order</span>
       <Input
         icon={<AiOutlineSearch fontSize={18} />}
         placeholder="Search our delicius brugers"
@@ -53,6 +53,9 @@ function Home() {
         category={selectedCategory}
         loading={loading}
       />
+      <div className={styles.observer} ref={elementRef}>
+        {" "}
+      </div>
     </Layout>
   );
 }

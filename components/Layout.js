@@ -9,7 +9,7 @@ import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
 import { useAuthUser } from "next-firebase-auth";
 import { AiOutlineUser } from "react-icons/ai";
-import { memo, useEffect, useState, useCallback} from "react";
+import { memo, useEffect, useState, useCallback } from "react";
 import MaleProfile from "../public/male.svg";
 import FemaleProfile from "../public/female.svg";
 import GlobalContext from "context/GlobalContext";
@@ -37,7 +37,6 @@ function Layout({
 
   return (
     <div className={styles.layout} style={{ backgroundColor: background }}>
-    
       <Head>
         <title>Food delivery</title>
         <meta name="description" content={content} />
