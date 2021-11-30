@@ -151,11 +151,18 @@ async function getUserData() {
 async function getFoodCart(dataNoLogin) {
   try {
     let data;
+
     data = await getUserData();
     if (!auth.currentUser) {
       data = dataNoLogin;
+      const listOfFood = await Promise.all(
+        data.map(async (name) => {
+          const food = await getFoodByName(name);
+          return food[0];
+        })
+      );
+      return listOfFood;
     }
-
     const listOfFood = await Promise.all(
       data.cart.map(async (name) => {
         const food = await getFoodByName(name);

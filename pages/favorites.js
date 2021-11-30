@@ -8,6 +8,7 @@ import GlobalContext from "context/GlobalContext";
 function Favorites() {
   const [loading, setLoading] = useState(false);
   const { favorites } = useContext(GlobalContext);
+  console.log(favorites);
   const [data, setData] = useState([]);
   useEffect(() => {
     setLoading(true);
