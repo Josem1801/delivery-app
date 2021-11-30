@@ -1,7 +1,7 @@
-import { useReducer } from "react";
+import { useReducer, useEffect, memo } from "react";
 import GlobalContext from "context/GlobalContext";
 import appReducer from "context/appReducer";
-import { getFoodCartArr } from "../firebase";
+import { getFoodCartArr } from "@firebaseFunctions";
 import GetLocalStorage from "./utils/getLocalStorage";
 import { KEY_CART, KEY_FAVORITES } from "./utils/types";
 
@@ -13,7 +13,7 @@ function UserProvider({ children }) {
   };
 
   const [state, dispatch] = useReducer(appReducer, initialState);
-  console.log(state);
+
   function addToCart(food) {
     dispatch({ payload: food, type: "ADD_CART" });
   }
@@ -35,6 +35,7 @@ function UserProvider({ children }) {
   function removeFavorite(food) {
     dispatch({ payload: food, type: "REMOVE_FAVORITE" });
   }
+  
   const value = {
     cart: state.cart,
     favorites: state.favorites,
@@ -51,4 +52,4 @@ function UserProvider({ children }) {
   );
 }
 
-export default UserProvider;
+export default memo(UserProvider);

@@ -1,16 +1,5 @@
+import { db, auth } from "@firebase";
 import {
-  createUserWithEmailAndPassword,
-  getAuth,
-  GoogleAuthProvider,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  updateProfile,
-} from "@firebase/auth";
-import GetLocalStorage from "context/utils/getLocalStorage";
-import { KEY_CART } from "context/utils/types";
-import { initializeApp, getApp, getApps } from "firebase/app";
-import {
-  getFirestore,
   getDocs,
   getDoc,
   collection,
@@ -20,26 +9,20 @@ import {
   doc,
   collectionGroup,
   updateDoc,
+  addDoc,
 } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: "delivery-app-7ccb2.appspot.com",
-  messagingSenderId: "692813078809",
-  appId: "1:692813078809:web:2bfc79d6791d2b56e7a588",
-};
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const db = getFirestore(app);
-const storage = getStorage();
-const auth = getAuth();
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  updateProfile,
+} from "firebase/auth";
+
 const googleProvider = new GoogleAuthProvider();
 
-async function getCategoryFood(db, category = "burgers") {
+async function getCategoryFood(category = "burgers") {
   const foodCol = collection(db, `categorys/${category}/products`);
   const docs = await getDocs(foodCol);
   const foodCategory = docs.docs.map((category) => category.data());
@@ -97,6 +80,7 @@ async function getFoodByCollectionAndName(category, name) {
 
   return food[0];
 }
+
 async function getFoodByName(name) {
   try {
     const food = query(
@@ -105,6 +89,7 @@ async function getFoodByName(name) {
     );
     const data = await getDocs(food);
     const result = data.docs.map((data) => data.data());
+
     return result;
   } catch (err) {
     console.log(err);
@@ -114,13 +99,18 @@ async function getFoodByName(name) {
 async function addFoodToCartDB(product) {
   try {
     const userDoc = doc(db, `users/${auth.currentUser.email}`);
-    const currentData = await getFoodCartArr();
-    const dataExist = currentData.includes(product);
-    if (dataExist) {
-      throw "error";
+    const currentData = await getUserData();
+    if (currentData.cart) {
+      const dataExist = currentData.cart.includes(product.name);
+      if (dataExist) {
+        throw "error";
+      }
     }
+
+    const data = currentData.cart ? currentData.cart : "";
     await setDoc(userDoc, {
-      cart: [product, ...currentData],
+      ...currentData,
+      cart: [product, ...data],
     });
     return product;
   } catch (err) {
@@ -130,25 +120,29 @@ async function addFoodToCartDB(product) {
 async function addFoodToFavoritesDB(product) {
   try {
     const userDoc = doc(db, `users/${auth.currentUser.email}`);
-    const currentData = await getFoodCartArr();
-    const dataExist = currentData.includes(product);
-    if (dataExist) {
-      throw "error";
+    const currentData = await getUserData();
+    if (currentData.favorites) {
+      const dataExist = currentData.favorites.includes(product.name);
+      if (dataExist) {
+        throw "error";
+      }
     }
+    const data = currentData.favorites ? currentData.favorites : {};
     await setDoc(userDoc, {
-      favorites: [product, ...currentData],
+      ...currentData,
+      favorites: [product, ...data],
     });
     return product;
   } catch (err) {
     throw err;
   }
 }
-async function getFoodCartArr() {
+async function getUserData() {
   try {
     const userDoc = doc(db, `users/${auth.currentUser?.email}`);
-    const cartData = await getDoc(userDoc);
-    const currentData = cartData.data();
-    return currentData?.cart;
+    const userData = await getDoc(userDoc);
+    const currentData = userData.data();
+    return currentData;
   } catch (err) {
     throw err;
   }
@@ -157,13 +151,13 @@ async function getFoodCartArr() {
 async function getFoodCart(dataNoLogin) {
   try {
     let data;
-    data = await getFoodCartArr();
-    if (!data && !auth.currentUser) {
+    data = await getUserData();
+    if (!auth.currentUser) {
       data = dataNoLogin;
     }
-    if (dataNoLogin.length < 1) return [];
+
     const listOfFood = await Promise.all(
-      data.map(async (name) => {
+      data.cart.map(async (name) => {
         const food = await getFoodByName(name);
         return food[0];
       })
@@ -179,15 +173,20 @@ async function deleteFoodCart(newCart) {
     await updateDoc(userDoc, { cart: newCart });
   } catch (error) {}
 }
+
+async function deleteFoodFavoriteDB(newCart) {
+  try {
+    const userDoc = doc(db, `users/${auth.currentUser.email}`);
+    await updateDoc(userDoc, { favorites: newCart });
+  } catch (error) {}
+}
+
 export {
-  app,
-  db,
-  storage,
-  auth,
   deleteFoodCart,
+  deleteFoodFavoriteDB,
   addFoodToFavoritesDB,
   addFoodToCartDB,
-  getFoodCartArr,
+  getUserData,
   getFoodCart,
   getFoodByName,
   getCategoryFood,

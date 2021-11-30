@@ -9,11 +9,12 @@ import { FaRegUser } from "react-icons/fa";
 import { useRouter } from "next/dist/client/router";
 import { useAuthUser } from "next-firebase-auth";
 import { AiOutlineUser } from "react-icons/ai";
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useState, useCallback} from "react";
 import MaleProfile from "../public/male.svg";
 import FemaleProfile from "../public/female.svg";
 import GlobalContext from "context/GlobalContext";
 import { useContext } from "react";
+import Script from "next/script";
 function Layout({
   content,
   children,
@@ -30,18 +31,19 @@ function Layout({
   function hanldeAddToCart() {
     push("/cart");
   }
-
   useEffect(() => {
     setFemale(window.localStorage.getItem("gender") || false);
   }, []);
 
   return (
     <div className={styles.layout} style={{ backgroundColor: background }}>
+    
       <Head>
         <title>Food delivery</title>
         <meta name="description" content={content} />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+
       {header ? (
         <header className={styles.layout__header}>
           <span className={styles.layout__headerPhoto}>

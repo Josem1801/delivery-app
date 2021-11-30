@@ -12,7 +12,7 @@ import {
   withAuthUser,
   withAuthUserTokenSSR,
 } from "next-firebase-auth";
-import { auth } from "../../firebase";
+import { auth } from "@firebase";
 import Spinner from "@components/Spinner";
 
 export const getServerSideProps = withAuthUserTokenSSR({

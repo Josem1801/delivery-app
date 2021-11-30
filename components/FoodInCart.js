@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "@stylesComponents/FoodInCart.module.css";
-import { getFoodByName } from "../firebase";
+import { getFoodByName } from "@firebaseFunctions";
 import Image from "next/image";
 import Spinner from "./Spinner";
 import { MdClose } from "react-icons/md";

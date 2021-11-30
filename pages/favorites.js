@@ -1,6 +1,6 @@
 import Layout from "@components/Layout";
 import PopularFoodCard from "@components/PopularFoodCard";
-import { getFoodCart } from "../firebase";
+import { getFoodCart } from "@firebaseFunctions";
 import React, { useContext, useEffect, useState } from "react";
 import { KEY_FAVORITES } from "context/utils/types";
 import GlobalContext from "context/GlobalContext";

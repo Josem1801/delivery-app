@@ -9,11 +9,12 @@ function Button({
   borderColor,
   height,
   width,
+  className,
   ...props
 }) {
   return (
     <>
-      <button type="submit" {...props} className="button">
+      <button type="submit" {...props} className={`button ${className}`}>
         {children}
       </button>
       <style jsx>{`

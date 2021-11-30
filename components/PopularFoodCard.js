@@ -8,7 +8,13 @@ function PopularFoodCard({ image, name, type, price, category }) {
       <Link href={`/food/${category}/${name}`} passHref>
         <div className={styles.card__backgroundColor}>
           <div className={styles.card__image}>
-            <Image height={200} width={220} src={image} alt="Chipotle" />
+            <Image
+              height={200}
+              width={220}
+              src={image}
+              alt={name}
+              loading="lazy"
+            />
           </div>
         </div>
       </Link>

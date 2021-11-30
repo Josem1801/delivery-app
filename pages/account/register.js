@@ -13,7 +13,7 @@ import {
 } from "next-firebase-auth";
 import styles from "@stylesPages/Register.module.css";
 import { useFormik } from "formik";
-import { createUser } from "../../firebase";
+import { createUser } from "@firebaseFunctions";
 import Spinner from "@components/Spinner";
 
 export const getServerSideProps = withAuthUserTokenSSR({

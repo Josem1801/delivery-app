@@ -14,9 +14,8 @@ import {
 } from "next-firebase-auth";
 import {
   loginWithEmailAndPassword,
-  auth,
   loginWithGoogle,
-} from "../../firebase";
+} from "@firebaseFunctions";
 
 import { useState } from "react";
 import Spinner from "@components/Spinner";

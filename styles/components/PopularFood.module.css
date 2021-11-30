@@ -2,8 +2,9 @@
   display: grid;
   grid-template-rows: 35px 1fr;
   grid-template-columns: 1fr;
-  align-items: center;
+
   width: 100%;
+  min-height: 325px;
 }
 .header {
   display: flex;

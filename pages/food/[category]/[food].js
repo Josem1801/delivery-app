@@ -1,6 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/dist/client/router";
-import { getFoodByCollectionAndName, addFoodToCartDB } from "../../../firebase";
+import {
+  getFoodByCollectionAndName,
+  addFoodToCartDB,
+  addFoodToFavoritesDB,
+  deleteFoodFavoriteDB,
+} from "@firebaseFunctions";
 import Layout from "@components/Layout";
 import HeaderBack from "@components/HeaderBack";
 import { BiHeart } from "react-icons/bi";
@@ -29,14 +34,14 @@ function Food() {
   const category = useRouter().query.category;
 
   async function handleFavorite() {
-    if (authUser.id) {
-      await addFoodToFavoritesDB({ name: data.name, category });
-    }
     addFavorite({ name: data.name, category });
     setLocalStorage(KEY_FAVORITES, [
       ...favorites,
       { name: data.name, category },
     ]);
+    if (authUser.id) {
+      await addFoodToFavoritesDB({ name: data.name, category });
+    }
   }
 
   function itsInFavorite(nameFood) {
@@ -44,9 +49,8 @@ function Food() {
   }
   async function handleFavoriteRemove() {
     const filterFavorite = favorites.filter(({ name }) => name !== data.name);
-
     if (authUser.id) {
-      deleteFoodCart(newCart);
+      deleteFoodFavoriteDB(filterFavorite);
     }
 
     removeFavorite(data.name);

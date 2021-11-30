@@ -10,6 +10,12 @@
       ],
       "@stylesPages/*": [
         "styles/pages/*"
+      ],
+      "@firebase": [
+        "firebase/firebase.js"
+      ],
+      "@firebaseFunctions": [
+        "firebase/firebaseFunctions.js"
       ]
     }
   },
