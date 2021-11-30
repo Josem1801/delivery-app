@@ -15,7 +15,7 @@ export default function checkout(req, res) {
       },
     ],
     back_urls: {
-      success: "http://localhost:3000/api/feedback",
+      success: "http://localhost:3000/cart",
       failure: "http://localhost:3000/api/feedback",
       pending: "http://localhost:3000/api/feedback",
     },

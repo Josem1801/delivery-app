@@ -4,7 +4,7 @@
   grid-template-columns: 1fr;
 
   width: 100%;
-  min-height: 325px;
+  min-height: 70vh;
 }
 .header {
   display: flex;

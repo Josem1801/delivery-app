@@ -23,7 +23,7 @@ import {
 
 const googleProvider = new GoogleAuthProvider();
 
-async function getCategoryFood(category = "burgers", limite) {
+async function getCategoryFood(category = "burgers", limite, lastData) {
   const foodCol = query(
     collection(db, `categorys/${category}/products`),
     limit(limite)
@@ -32,13 +32,18 @@ async function getCategoryFood(category = "burgers", limite) {
   const foodCategory = foodDocs.docs.map((category) => category.data());
 
   const lastVisible = foodDocs.docs[foodDocs.docs.length - 1];
-  const next = query(
-    collection(db, `categorys/${category}/products`),
-    startAfter(lastVisible),
-    limit(limite)
-  );
+  if (lastData) {
+    const next = query(
+      collection(db, `categorys/${category}/products`),
+      startAfter(lastVisible),
+      limit(limite)
+    );
+    const nextFood = await getDocs(next);
+    const data = nextFood.docs.map((data) => data.data());
+    return data;
+  }
 
-  return foodCategory;
+  return { data: foodCategory, lastVisible };
 }
 
 async function loginWithEmailAndPassword(email, password) {
