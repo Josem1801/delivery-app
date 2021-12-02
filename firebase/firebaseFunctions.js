@@ -23,7 +23,7 @@ import {
 
 const googleProvider = new GoogleAuthProvider();
 
-async function getCategoryFood(category = "burgers", limite, lastData) {
+async function getCategoryFood(category, limite) {
   const foodCol = query(
     collection(db, `categorys/${category}/products`),
     limit(limite)
@@ -32,17 +32,6 @@ async function getCategoryFood(category = "burgers", limite, lastData) {
   const foodCategory = foodDocs.docs.map((category) => category.data());
 
   const lastVisible = foodDocs.docs[foodDocs.docs.length - 1];
-  if (lastData) {
-    const next = query(
-      collection(db, `categorys/${category}/products`),
-      startAfter(lastVisible),
-      limit(limite)
-    );
-    const nextFood = await getDocs(next);
-    const data = nextFood.docs.map((data) => data.data());
-    return data;
-  }
-
   return { data: foodCategory, lastVisible };
 }
 
@@ -146,9 +135,12 @@ async function addFoodToFavoritesDB(product) {
     throw err;
   }
 }
-async function getUserData() {
+async function getUserData(user) {
   try {
-    const userDoc = doc(db, `users/${auth.currentUser?.email}`);
+    const userDoc = doc(
+      db,
+      user ? `users/${user}` : `users/${auth.currentUser?.email}`
+    );
     const userData = await getDoc(userDoc);
     if (!userData.exists()) {
       await setDoc(doc(db, `users/${auth.currentUser?.email}`), {
@@ -168,14 +160,16 @@ async function getFoodCart(dataNoLogin) {
   try {
     let data;
     data = await getUserData();
-    if (!auth.currentUser) {
+    if (dataNoLogin) {
       data = dataNoLogin;
+
       const listOfFood = await Promise.all(
         data.map(async ({ name }) => {
           const food = await getFoodByName(name);
           return food[0];
         })
       );
+
       return listOfFood;
     }
     const listOfFood = await Promise.all(

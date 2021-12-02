@@ -5,6 +5,7 @@ import {
   addFoodToCartDB,
   addFoodToFavoritesDB,
   deleteFoodFavoriteDB,
+  getUserData,
 } from "@firebaseFunctions";
 import Layout from "@components/Layout";
 import HeaderBack from "@components/HeaderBack";
@@ -14,52 +15,83 @@ import Image from "next/image";
 import Square from "@components/Square";
 import { FiShoppingBag } from "react-icons/fi";
 import { useAuthUser } from "next-firebase-auth";
-import Spinner from "@components/Spinner";
 import GlobalContext from "context/GlobalContext";
 import { FaHeart } from "react-icons/fa";
 import setLocalStorage from "context/utils/setLocalStorage";
 import { KEY_CART, KEY_FAVORITES } from "context/utils/types";
+import { collectionGroup, getDocs } from "@firebase/firestore";
+import { db } from "@firebase";
 
-function Food() {
-  const [data, setData] = useState([]);
-  const [loader, setLoader] = useState(true);
+export const getStaticPaths = async () => {
+  const foodGroup = collectionGroup(db, "products");
+  const foodDocs = await getDocs(foodGroup);
+  const foodSlug = foodDocs.docs.map((food) => ({
+    params: {
+      category: food.data().category,
+      food: food.data().name,
+    },
+  }));
+
+  return {
+    paths: foodSlug,
+    fallback: "blocking",
+  };
+};
+
+export const getStaticProps = async ({ params }) => {
+  try {
+    const category = params?.category;
+    const name = params?.food;
+    if (typeof category !== "string" || typeof name !== "string") {
+      return {
+        notFound: true,
+      };
+    }
+    const foodData = await getFoodByCollectionAndName(category, name);
+    return {
+      props: {
+        data: foodData,
+      },
+      notFound: false,
+    };
+  } catch (err) {
+    return {
+      notFound: true,
+    };
+  }
+};
+
+function Food({ data }) {
   const [selectedSize, setSelectedSize] = useState("M");
   const [counter, setCounter] = useState(1);
   const [multiplierNumber, setMultiplierNumber] = useState(0);
 
   const authUser = useAuthUser();
-  const { addToCart, cart, favorites, removeFavorite, addFavorite } =
+  const { addFavorite, favorites, cart, addToCart, removeFavorite } =
     useContext(GlobalContext);
-  const food = useRouter().query.food;
-  const category = useRouter().query.category;
-
-  async function handleAddFavorite() {
-    if (!itsInFavorite()) {
-      addFavorite({ name: data.name, category });
-      setLocalStorage(KEY_FAVORITES, [
-        ...favorites,
-        { name: data.name, category },
-      ]);
-      if (authUser.id) {
-        await addFoodToFavoritesDB({ name: data.name, category });
-      }
-    }
-  }
-
-  function itsInFavorite() {
-    return favorites?.some(({ name }) => name === data.name);
-  }
-  function itsInCart() {
-    return cart?.some(({ name }) => name === data.name);
-  }
 
   async function handleFavoriteRemove() {
     const filterFavorite = favorites.filter(({ name }) => name !== data.name);
     if (authUser.id) {
       deleteFoodFavoriteDB(filterFavorite);
+      removeFavorite(filterFavorite);
     }
-    removeFavorite(data.name);
-    setLocalStorage(KEY_FAVORITES, filterFavorite);
+  }
+
+  async function handleAddFavorite() {
+    if (authUser.id) {
+      addFavorite({ name: data.name, category: data.category });
+      setLocalStorage(KEY_FAVORITES, [
+        {
+          name: data.name,
+          category: data.category,
+        },
+        ...favorites,
+      ]);
+      await addFoodToFavoritesDB({ name: data.name, category: data.category });
+      return;
+    }
+    alert("Inicia sesion para agregar favoritos");
   }
 
   async function handleAddToCart() {
@@ -70,12 +102,28 @@ function Food() {
         price: (data.price + multiplierNumber)?.toFixed(1),
         image: data.image,
       };
-      addToCart(dataToCart);
-      setLocalStorage(KEY_CART, [...cart, dataToCart]);
       if (authUser.id) {
+        addToCart(dataToCart);
+        setLocalStorage(KEY_CART, [
+          {
+            name: data.name,
+            category: data.category,
+          },
+          ...cart,
+        ]);
         await addFoodToCartDB(dataToCart);
+        return;
       }
+      alert("inicia sesion para agregar al carrito");
     }
+  }
+
+  function itsInFavorite() {
+    return favorites?.some(({ name }) => name === data.name);
+  }
+
+  function itsInCart() {
+    return cart?.some(({ name }) => name === data.name);
   }
 
   function handleSquare(symbol, price) {
@@ -83,24 +131,12 @@ function Food() {
     setMultiplierNumber(price);
   }
 
-  useEffect(() => {
-    setLoader(true);
-    getFoodByCollectionAndName(category, food)
-      .then((food) => {
-        setData(food);
-        setLoader(false);
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoader(false);
-      });
-  }, [food, category]);
   return (
     <Layout className={styles.container} header={false} navbar={false}>
       <HeaderBack
         background="white"
         iconRight={
-          itsInFavorite(data.name) ? (
+          itsInFavorite() ? (
             <FaHeart
               onClick={handleFavoriteRemove}
               fontSize={23}
@@ -115,36 +151,29 @@ function Food() {
           )
         }
       />
-      {loader ? (
-        <Spinner margin="350px auto 0 auto" />
-      ) : (
-        <div className={styles.text}>
-          <h1>{data.name}</h1>
-          <p>{data.description}</p>
 
-          <div className={styles.image}>
-            {data.image && (
-              <Image
-                src={data.image}
-                alt={data.name}
-                width={180}
-                height={180}
-              />
-            )}
-          </div>
-          {foodSize.map(({ size, symbol, price }) => (
-            <Square
-              key={symbol}
-              onClick={() => handleSquare(symbol, price)}
-              className={`${styles[size]} ${
-                symbol == selectedSize && styles.squareSelected
-              } ${styles.square}`}
-            >
-              {symbol}
-            </Square>
-          ))}
+      <div className={styles.text}>
+        <h1>{data.name}</h1>
+        <p>{data.description}</p>
+
+        <div className={styles.image}>
+          {data.image && (
+            <Image src={data.image} alt={data.name} width={180} height={180} />
+          )}
         </div>
-      )}
+        {foodSize.map(({ size, symbol, price }) => (
+          <Square
+            key={symbol}
+            onClick={() => handleSquare(symbol, price)}
+            className={`${styles[size]} ${
+              symbol == selectedSize && styles.squareSelected
+            } ${styles.square}`}
+          >
+            {symbol}
+          </Square>
+        ))}
+      </div>
+
       <div className={styles.counter}>
         <button
           onClick={() => counter > 1 && setCounter(counter - 1)}
@@ -163,11 +192,11 @@ function Food() {
       <div className={styles.bottom}>
         <span className={styles.textPrice}>Price</span>
         <button
-          disabled={itsInCart(cart.name)}
+          disabled={itsInCart()}
           className={styles.addToCart}
           onClick={handleAddToCart}
         >
-          {itsInCart(cart.name) ? (
+          {itsInCart() ? (
             "Añadido"
           ) : (
             <>
@@ -177,16 +206,10 @@ function Food() {
         </button>
 
         <span className={styles.price}>
-          {loader ? (
-            <Spinner size="small" margin="0 10px" strokeWidth={3} />
-          ) : (
-            <>
-              {`$ ${data.price + multiplierNumber} ~`}
-              <span className={styles.sumBuy}>
-                {((data.price + multiplierNumber) * counter)?.toFixed(1)}
-              </span>
-            </>
-          )}
+          {`$ ${data.price + multiplierNumber} ~`}
+          <span className={styles.sumBuy}>
+            {((data.price + multiplierNumber) * counter)?.toFixed(1)}
+          </span>
         </span>
       </div>
     </Layout>

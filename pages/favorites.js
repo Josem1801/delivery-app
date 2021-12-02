@@ -1,34 +1,39 @@
 import Layout from "@components/Layout";
 import PopularFoodCard from "@components/PopularFoodCard";
-import { getFoodCart } from "@firebaseFunctions";
-import React, { useContext, useEffect, useState } from "react";
-import { KEY_FAVORITES } from "context/utils/types";
-import GlobalContext from "context/GlobalContext";
-
-function Favorites() {
-  const [loading, setLoading] = useState(false);
-  const { favorites } = useContext(GlobalContext);
-  console.log(favorites);
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    setLoading(true);
-    const getCart = async () => {
-      const onlyNames = favorites.map(({ name }) => name);
-      const food = await getFoodCart(onlyNames);
-      const newFood = food.map((newFood, idx) => ({
-        ...newFood,
-        category: favorites[idx].category,
-      }));
-
-      setData(newFood);
-      setLoading(false);
+import { getFoodCart, getUserData } from "@firebaseFunctions";
+import { AuthAction, useAuthUser, withAuthUserSSR } from "next-firebase-auth";
+export const getServerSideProps = withAuthUserSSR({
+  whenAuthed: AuthAction.RENDER,
+})(async (user) => {
+  const userData = await getUserData(user.AuthUser.email);
+  if (!userData) {
+    return {
+      props: {
+        fav: [],
+      },
     };
-    getCart();
-  }, [favorites]);
+  }
+  const fav = await getFoodCart(userData.favorites);
+
+  return {
+    props: {
+      fav,
+    },
+  };
+});
+function Favorites({ fav }) {
+  const authUser = useAuthUser();
+  if (!authUser.id) {
+    return (
+      <Layout>
+        <div>Inicia sesion para agregar cosas al carrito</div>;
+      </Layout>
+    );
+  }
   return (
     <Layout>
-      {data.length > 0 ? (
-        data?.map(({ price, type, name, image, category }, idx) => (
+      {fav.length > 0 ? (
+        fav?.map(({ price, type, name, image, category }, idx) => (
           <PopularFoodCard
             key={idx}
             price={price}

@@ -1,7 +1,7 @@
 import FoodInCart from "@components/FoodInCart";
 import HeaderBack from "@components/HeaderBack";
 import Layout from "@components/Layout";
-import { getFoodCart, deleteFoodCart } from "@firebaseFunctions";
+import { getFoodCart, deleteFoodCart, getUserData } from "@firebaseFunctions";
 import Script from "next/script";
 import React, { memo, useContext, useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
@@ -10,12 +10,39 @@ import setLocalStorage from "context/utils/setLocalStorage";
 import { KEY_CART } from "context/utils/types";
 import GlobalContext from "context/GlobalContext";
 import Button from "@components/Button";
-import { useAuthUser } from "next-firebase-auth";
-function Cart() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const { removeCart, cart } = useContext(GlobalContext);
+import { AuthAction, useAuthUser, withAuthUserSSR } from "next-firebase-auth";
+export const getServerSideProps = withAuthUserSSR({
+  whenAuthed: AuthAction.RENDER,
+})(async (user) => {
+  const userData = await getUserData(user.AuthUser.email);
+  if (!userData) {
+    return {
+      props: {
+        cart: [],
+      },
+    };
+  }
+  return {
+    props: {
+      cart: userData.cart,
+    },
+  };
+});
+function Cart({ cart }) {
   const authUser = useAuthUser();
+  const [userCartData, setUserCartData] = useState(cart);
+  const { removeCart } = useContext(GlobalContext);
+  if (!authUser.id) {
+    return (
+      <Layout>
+        <div style={{ textAlign: "center" }}>
+          Inicia sesion para agregar cosas al carrito
+        </div>
+        ;
+      </Layout>
+    );
+  }
+
   let mercadopago;
 
   function handleCheckout(e) {
@@ -58,13 +85,11 @@ function Cart() {
       },
     });
   }
-  function handleDelete(food) {
-    const filterCart = data.filter(({ name }) => name !== food);
-    setData(filterCart);
-    const newCart = filterCart.map(({ name }) => name);
-    deleteFoodCart(newCart);
+  async function handleDelete(food) {
+    const filterCart = userCartData.filter(({ name }) => name !== food);
     removeCart(filterCart);
-    setLocalStorage(KEY_CART, newCart);
+    setUserCartData(filterCart);
+    await deleteFoodCart(filterCart);
   }
 
   return (
@@ -75,14 +100,12 @@ function Cart() {
         iconRight={<BsThreeDotsVertical fontSize={18} />}
         title="Cart"
       />
-      {loading ? (
-        <Spinner />
-      ) : cart?.length === 0 ? (
+      {userCartData.length === 0 ? (
         <p style={{ textAlign: "center" }}>
           Aun no tienes nada en tu carrito :c
         </p>
       ) : (
-        cart?.map(({ price, name, image, amount }, idx) => (
+        userCartData.map(({ price, name, image, amount }, idx) => (
           <FoodInCart
             key={idx}
             price={price}
@@ -93,7 +116,7 @@ function Cart() {
           />
         ))
       )}
-      {cart?.length > 0 && (
+      {userCartData.length > 0 && (
         <>
           <form onSubmit={handleCheckout}>
             <Button className="checkout" width="100%" height="50px">

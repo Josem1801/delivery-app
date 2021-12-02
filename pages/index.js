@@ -7,51 +7,55 @@ import Input from "@components/Input";
 import Papas from "../public/papas.svg";
 import PopularFood from "@components/PopularFood";
 import { AiOutlineSearch } from "react-icons/ai";
-import { useEffect, useState, memo, useRef, useMemo, useCallback } from "react";
+import { useEffect, useState, memo, useRef, useCallback } from "react";
 import { getCategoryFood } from "@firebaseFunctions";
 import { withAuthUser } from "next-firebase-auth";
 import useLazyFood from "hooks/useLazyFood";
 import styles from "@stylesPages/Home.module.css";
 import Spinner from "@components/Spinner";
+import debounce from "just-debounce-it";
+
 function Home() {
   const [selectedCategory, setSelectedCategory] = useState("burgers");
   const [categoryData, setCategoryData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingNewData, setLoadingNewData] = useState(false);
-  const [lastVisible, setLastVisible] = useState();
   const [limit, setLimit] = useState(3);
   const elementRef = useRef();
   const { show } = useLazyFood(elementRef.current, selectedCategory);
   function handleCategory(category) {
     setSelectedCategory(category.toLowerCase());
-    setLastVisible(null);
     setLimit(3);
+    setCategoryData([]);
   }
+
+  const debounceHandleNextFood = useCallback(
+    debounce(() => {
+      setLimit((prevLimit) => prevLimit + 3);
+    }, 300),
+    [selectedCategory]
+  );
+
   useEffect(() => {
-    if (lastVisible) {
-      setLoadingNewData(true);
-      getCategoryFood(selectedCategory, limit, lastVisible).then((newData) => {
-        setCategoryData([...categoryData, ...newData]);
-        setLimit(limit * 2);
-        setLoadingNewData(false);
-      });
+    if (show) {
+      debounceHandleNextFood();
     }
   }, [show]);
   useEffect(() => {
-    setLoading(true);
+    limit < 4 ? setLoading(true) : setLoadingNewData(true);
     getCategoryFood(selectedCategory, limit)
-      .then(({ data, lastVisible }) => {
-        console.log(data);
-        setCategoryData(data);
-        console.log(lastVisible);
-        setLastVisible(lastVisible);
+      .then(({ data }) => {
+        setCategoryData([...categoryData, ...data.slice(limit - 3, limit)]);
+
         setLoading(false);
+        setLoadingNewData(false);
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
+        setLoadingNewData(false);
       });
-  }, [selectedCategory]);
+  }, [limit, selectedCategory]);
   return (
     <Layout>
       <h1>Hey!</h1>
@@ -71,11 +75,12 @@ function Home() {
         category={selectedCategory}
         loading={loading}
       />
-      {loadingNewData ? (
-        <Spinner strokeWidth={3} margin="0 auto 15px auto" size="small" />
-      ) : (
-        <div className={styles.observer} ref={elementRef}></div>
-      )}
+      <div className={styles.loader}>
+        {loadingNewData && (
+          <Spinner strokeWidth={3} margin="0px auto " size="small" />
+        )}
+      </div>
+      <div className={styles.observer} ref={elementRef}></div>
     </Layout>
   );
 }

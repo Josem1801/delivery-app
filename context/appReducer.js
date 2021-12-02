@@ -1,4 +1,3 @@
-
 function appReducer(state, action) {
   const { type, payload } = action;
   switch (type) {
@@ -17,14 +16,13 @@ function appReducer(state, action) {
       return { ...state, cart: payload };
     default:
     case "REMOVE_FAVORITE":
-
       return {
         ...state,
-        favorites: state.favorites.filter(({ name }) => name !== payload),
+        favorites: payload,
       };
     case "ADD_FAVORITE":
       if (payload === undefined) return { ...state };
-      if (state.cart.includes(payload.favorite)) return { ...state };
+      if (state.favorites.includes(payload.favorite)) return { ...state };
       return { ...state, favorites: [...state.favorites, payload] };
       break;
   }

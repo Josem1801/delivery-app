@@ -5,7 +5,6 @@ mercadopago.configure({
 });
 
 export default function checkout(req, res) {
-  console.log(req.body);
   let preference = {
     items: [
       {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Layout from "@components/Layout";
 import HeaderBack from "@components/HeaderBack";
 import Image from "next/image";
@@ -14,6 +14,7 @@ import {
 } from "next-firebase-auth";
 import { auth } from "@firebase";
 import Spinner from "@components/Spinner";
+import GlobalContext from "context/GlobalContext";
 
 export const getServerSideProps = withAuthUserTokenSSR({
   whenUnauthed: AuthAction.REDIRECT_TO_LOGIN,
@@ -24,6 +25,7 @@ export const getServerSideProps = withAuthUserTokenSSR({
 function Account() {
   const authUser = useAuthUser();
   const [female, setFemale] = useState();
+
   function handleGener() {
     setFemale(!female);
     if (typeof window !== "undefined") {

@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styles from "@stylesComponents/FoodInCart.module.css";
-import { getFoodByName } from "@firebaseFunctions";
 import Image from "next/image";
-import Spinner from "./Spinner";
+
 import { MdClose } from "react-icons/md";
 function FoodInCart({ initialCounter = 1, image, name, price, handleDelete }) {
   const [counter, setCounter] = useState(initialCounter);

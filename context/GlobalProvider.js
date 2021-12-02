@@ -13,7 +13,6 @@ function UserProvider({ children }) {
   };
 
   const [state, dispatch] = useReducer(appReducer, initialState);
-
   function addToCart(food) {
     dispatch({ payload: food, type: "ADD_CART" });
   }
@@ -35,7 +34,7 @@ function UserProvider({ children }) {
   function removeFavorite(food) {
     dispatch({ payload: food, type: "REMOVE_FAVORITE" });
   }
-  
+
   const value = {
     cart: state.cart,
     favorites: state.favorites,
