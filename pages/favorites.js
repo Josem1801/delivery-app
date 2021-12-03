@@ -26,7 +26,9 @@ function Favorites({ fav }) {
   if (!authUser.id) {
     return (
       <Layout>
-        <div>Inicia sesion para agregar cosas a favoritos</div>
+        <div style={{ textAlign: "center" }}>
+          Inicia sesion para agregar cosas a favoritos
+        </div>
       </Layout>
     );
   }
