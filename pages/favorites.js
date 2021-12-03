@@ -26,7 +26,7 @@ function Favorites({ fav }) {
   if (!authUser.id) {
     return (
       <Layout>
-        <div>Inicia sesion para agregar cosas al carrito</div>;
+        <div>Inicia sesion para agregar cosas a favoritos</div>
       </Layout>
     );
   }
