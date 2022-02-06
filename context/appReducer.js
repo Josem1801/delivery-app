@@ -15,6 +15,8 @@ function appReducer(state, action) {
     case "SET_CART":
       return { ...state, cart: payload };
     default:
+    case "SET_FAVORITES":
+      return { ...state, favorites: payload };
     case "REMOVE_FAVORITE":
       return {
         ...state,
@@ -24,7 +26,6 @@ function appReducer(state, action) {
       if (payload === undefined) return { ...state };
       if (state.favorites.includes(payload.favorite)) return { ...state };
       return { ...state, favorites: [...state.favorites, payload] };
-      break;
   }
 }
 export default appReducer;

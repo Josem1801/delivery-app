@@ -160,6 +160,7 @@ async function getFoodCart(dataNoLogin) {
   try {
     let data;
     data = await getUserData();
+    console.log(data);
     if (dataNoLogin) {
       data = dataNoLogin;
 

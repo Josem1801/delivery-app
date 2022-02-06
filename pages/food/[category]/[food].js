@@ -17,8 +17,6 @@ import { FiShoppingBag } from "react-icons/fi";
 import { useAuthUser } from "next-firebase-auth";
 import GlobalContext from "context/GlobalContext";
 import { FaHeart } from "react-icons/fa";
-import setLocalStorage from "context/utils/setLocalStorage";
-import { KEY_CART, KEY_FAVORITES } from "context/utils/types";
 import { collectionGroup, getDocs } from "@firebase/firestore";
 import { db } from "@firebase";
 
@@ -73,7 +71,7 @@ function Food({ data }) {
   async function handleFavoriteRemove() {
     const filterFavorite = favorites.filter(({ name }) => name !== data.name);
     if (authUser.id) {
-      deleteFoodFavoriteDB(filterFavorite);
+      await deleteFoodFavoriteDB(filterFavorite);
       removeFavorite(filterFavorite);
     }
   }
@@ -81,13 +79,6 @@ function Food({ data }) {
   async function handleAddFavorite() {
     if (authUser.id) {
       addFavorite({ name: data.name, category: data.category });
-      setLocalStorage(KEY_FAVORITES, [
-        {
-          name: data.name,
-          category: data.category,
-        },
-        ...favorites,
-      ]);
       await addFoodToFavoritesDB({ name: data.name, category: data.category });
       return;
     }
@@ -104,13 +95,6 @@ function Food({ data }) {
       };
       if (authUser.id) {
         addToCart(dataToCart);
-        setLocalStorage(KEY_CART, [
-          {
-            name: data.name,
-            category: data.category,
-          },
-          ...cart,
-        ]);
         await addFoodToCartDB(dataToCart);
         return;
       }

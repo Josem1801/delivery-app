@@ -6,8 +6,6 @@ import Script from "next/script";
 import React, { memo, useContext, useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import Spinner from "@components/Spinner";
-import setLocalStorage from "context/utils/setLocalStorage";
-import { KEY_CART } from "context/utils/types";
 import GlobalContext from "context/GlobalContext";
 import Button from "@components/Button";
 import { AuthAction, useAuthUser, withAuthUserSSR } from "next-firebase-auth";
@@ -22,6 +20,7 @@ export const getServerSideProps = withAuthUserSSR({
       },
     };
   }
+  console.log(userData);
   return {
     props: {
       cart: userData.cart,
@@ -38,7 +37,6 @@ function Cart({ cart }) {
         <div style={{ textAlign: "center" }}>
           Inicia sesion para agregar cosas al carrito
         </div>
-        ;
       </Layout>
     );
   }

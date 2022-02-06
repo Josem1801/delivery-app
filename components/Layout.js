@@ -72,7 +72,9 @@ function Layout({
               cursor="pointer"
             />
             {cart?.length > 0 && (
-              <span className={styles.notifications}>{cart?.length}</span>
+              <span className={styles.notifications}>
+                {cart?.length > 9 ? "+9" : cart.length}
+              </span>
             )}
           </div>
         </header>
