@@ -7,18 +7,17 @@ import Link from "next/link";
 import Button from "@components/Button";
 import { FcGoogle } from "react-icons/fc";
 import styles from "@stylesComponents/Login.module.css";
+import * as Yup from "yup";
 import {
   withAuthUserTokenSSR,
   AuthAction,
   withAuthUser,
 } from "next-firebase-auth";
-import {
-  loginWithEmailAndPassword,
-  loginWithGoogle,
-} from "@firebaseFunctions";
+import { loginWithEmailAndPassword, loginWithGoogle } from "@firebaseFunctions";
 
 import { useState } from "react";
 import Spinner from "@components/Spinner";
+import { useFormik } from "formik";
 export const getServerSideProps = withAuthUserTokenSSR({
   whenAuthed: AuthAction.REDIRECT_TO_APP,
 })(() => {
@@ -29,9 +28,19 @@ function Login() {
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const handleLoginWithEmailAndPassword = (e) => {
-    e.preventDefault();
-    if (email.trim() && password.trim()) {
+  const { getFieldProps, handleSubmit, touched, errors } = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .required("El email es requerido")
+        .email("Email invalido"),
+      password: Yup.string().required("La contraseña es requerida"),
+    }),
+
+    onSubmit: ({ email, password }) => {
       setLoading(true);
       loginWithEmailAndPassword(email, password)
         .then((data) => {
@@ -48,8 +57,9 @@ function Login() {
           setLoading(false);
           throw err;
         });
-    }
-  };
+    },
+  });
+
   const handleLoginWithGoogle = async () => {
     await loginWithGoogle();
   };
@@ -59,21 +69,22 @@ function Login() {
       <section className={styles.login}>
         <h1>Inicia Sesion</h1>
 
-        <form onSubmit={handleLoginWithEmailAndPassword}>
+        <form onSubmit={handleSubmit}>
           <Input
             icon={<FiUser fontSize={18} />}
             placeholder="Correo electrónico"
             width="70%"
-            onChange={(e) => setEmail(e.target.value)}
-            error={errorMessage}
+            {...getFieldProps("email")}
+            error={errorMessage || (errors.email && touched.email)}
+            errorMessage={errors.email}
             center
           />
           <Input
             icon={<RiLockPasswordLine fontSize={18} />}
             placeholder="Contraseña"
             type="password"
-            onChange={(e) => setPassword(e.target.value)}
             width="70%"
+            {...getFieldProps("password")}
             error={errorMessage}
             errorMessage={errorMessage}
             center
