@@ -99,18 +99,21 @@ function Layout({
             {navbarData.map((section, id) => (
               <li key={id}>
                 <Link href={section.rute} passHref>
-                  <div
+                  <a
                     className={`
                     ${styles.layout__navSection} 
                     ${
-                      pathname === section.rute &&
-                      styles.layout__navSectionSelected
+                      pathname === section.rute ||
+                      pathname.includes(section.name.toLowerCase())
+                        ? styles.layout__navSectionSelected
+                        : null
                     }
                     `}
                   >
+                    {console.log()}
                     {section.icon}
                     <span>{section.name}</span>
-                  </div>
+                  </a>
                 </Link>
               </li>
             ))}

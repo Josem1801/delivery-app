@@ -79,7 +79,6 @@ function Cart({ cart }) {
       },
       render: {
         container: ".checkout",
-        label: "Pagar",
       },
     });
   }
