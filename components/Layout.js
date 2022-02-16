@@ -50,7 +50,7 @@ function Layout({
         <meta name="theme-color" content="#000" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" href="/apple-icon.png"></link>
+        <link rel="apple-touch-icon" href="/favicon.ico"></link>
       </Head>
 
       {header ? (
