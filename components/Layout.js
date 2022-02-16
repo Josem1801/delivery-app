@@ -99,7 +99,7 @@ function Layout({
             {navbarData.map((section, id) => (
               <li key={id}>
                 <Link href={section.rute} passHref>
-                  <a
+                  <div
                     className={`
                     ${styles.layout__navSection} 
                     ${
@@ -110,7 +110,7 @@ function Layout({
                   >
                     {section.icon}
                     <span>{section.name}</span>
-                  </a>
+                  </div>
                 </Link>
               </li>
             ))}
