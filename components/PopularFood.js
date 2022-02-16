@@ -11,10 +11,10 @@ function PopularFood({ loading, foodName, foodData = [], category }) {
       <div className={styles.header}>
         <span>Popular</span>
         <Link passHref href={`/${foodName}-all`}>
-          <a className={styles.viewAll}>
+          <p className={styles.viewAll}>
             View all
             <AiOutlineRight fontSize={11} style={{ paddingBottom: 2 }} />
-          </a>
+          </p>
         </Link>
       </div>
       {loading ? (
